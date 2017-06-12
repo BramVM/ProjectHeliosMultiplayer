@@ -1,0 +1,5 @@
+Very high level design for the game:
+-Each client and the node server makes an instance of the game (gameCore). 
+-Some code only runs on the client and some code only on the server.
+-Input is caught by the client and sent to each game instance.
+-The server instance updates each client instance at the end of each tick.
