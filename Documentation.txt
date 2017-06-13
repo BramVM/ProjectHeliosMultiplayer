@@ -3,3 +3,9 @@ Very high level design for the game:
 -Some code only runs on the client and some code only on the server.
 -Input is caught by the client and sent to each game instance.
 -The server instance updates each client instance at the end of each tick.
+
+Performance issue collision of bullets.
+Checking for collision of every bullet with anything on each frame tick consumes alot of resources. (to much)
+improvement idea: predict wich target might get hit and onely check for collision with those targets
+improvement idea: on fire predict if and when the bullet is going to hit something based on known variables and update the prediction when those variables change. (tricky to predict, do we know all needed variables?)
+improvement idea: change the gameplay and combatSystem so fire always requires target lockon and bullets are just fast cosmetic particles
