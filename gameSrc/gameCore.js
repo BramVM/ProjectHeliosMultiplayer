@@ -1,86 +1,52 @@
-
-var addAnimationMethode = function(onServer){
-	//creates requestAnimationFrame methode for window when missing
-	var frame_time = 60/1000; // run the local game at 16ms/ 60hz
-	if(onServer === true) frame_time = 45; //on server we run at 45ms, 22hz
-	( function () {
-
-	    var lastTime = 0;
-	    var vendors = [ 'ms', 'moz', 'webkit', 'o' ];
-
-	    for ( var x = 0; x < vendors.length && !window.requestAnimationFrame; ++ x ) {
-	        window.requestAnimationFrame = window[ vendors[ x ] + 'RequestAnimationFrame' ];
-	        window.cancelAnimationFrame = window[ vendors[ x ] + 'CancelAnimationFrame' ] || window[ vendors[ x ] + 'CancelRequestAnimationFrame' ];
-	    }
-
-	    if ( !window.requestAnimationFrame ) {
-	        window.requestAnimationFrame = function ( callback, element ) {
-	            var currTime = Date.now(), timeToCall = Math.max( 0, frame_time - ( currTime - lastTime ) );
-	            var id = window.setTimeout( function() { callback( currTime + timeToCall ); }, timeToCall );
-	            lastTime = currTime + timeToCall;
-	            return id;
-	        };
-	    }
-
-	    if ( !window.cancelAnimationFrame ) {
-	        window.cancelAnimationFrame = function ( id ) { clearTimeout( id ); };
-	    }
-
-	}() );
-}
-
-
 var gameCore = function(isServer,io){
-	this.onServer = isServer;
+	this.runningOnServer = isServer;
+	this.runningOnClient = !isServer;
+	this.players = [];
 	this.start = function(){
+
+		//polyfill for requestAnimationFrame (stole this from threeJs)
+		var addAnimationMethode = require('./addAnimationMethode.js');
+		addAnimationMethode(this.runningOnServer);
+
 		console.log("'gameCore' started");
-		console.log("Is this instance running on the server? : " + this.onServer);
-		if(this.onServer){
-			io.on('connection', function(socket){
-			  console.log('a user connected ' + socket.id);
-				//client.send(client.id); 
-			  //io.sockets.connected(socket.id).emit('create id', socket.id);
-			  socket.on('disconnect', function(){
-			    console.log('user disconnected');
-			  });
+		console.log("Is this instance running on the server? : " + this.runningOnServer);
 
-			  socket.on('direction change', function(direction, userId){
-			    console.log('direction ' + direction);
-			    io.emit('direction change', direction, userId);
-			  });
-
-			});
-
-			io.on('connection', function(socket){
-			  socket.on('direction change', function(direction, userId){
-			    console.log('direction ' + direction);
-			    io.emit('direction change', direction, userId);
-			  });
-			});
+		if(this.runningOnServer){//if this instance of the game is running on the server
+			
+			//listen to connection & disconnection of players
+			this.connectionBroadcast = require('./server-modules/connectionBroadcast.js');
+			this.connectionBroadcast.listen(io,this.players);
+			//listen to input of players
+			this.iterfaceBroadcast = require('./server-modules/iterfaceBroadcast.js');
+			this.iterfaceBroadcast.listen(io,this.players);
 		}
-		//polyfill requestAnimationFrame
-		addAnimationMethode(this.onServer);
-		//gather client input
-		if(!this.onServer){
-			this.inputInterface = require('./inputInterface.js');
+
+		if(this.runningOnClient){ //if this instance of the game is running on the client
+			
+			//handle client input
+			this.inputInterface = require('./client-modules/inputInterface.js');
 		}
-		//gameloop
-		this.update();
+
+		//start the gameloop
+		this.updateLoop();
+
 	};//gameCore.start
-	this.update = function(t) {
+	this.updateLoop = function(t) {
+		
 		//Work out the delta time
 	    this.dt = this.lastframetime ? ( (t - this.lastframetime)/1000.0) : 0.016;
+	    
 	    //Store the last frame time
 	    this.lastframetime = t;
+	    
 	    //Update the game specifics
 	    //console.log(this.updateid);
+	    //console.log(this.players.length);
+	    
 	    //schedule the next update
-	    this.updateid = window.requestAnimationFrame( this.update.bind(this), this.viewport );
-	}; //gameCore.update
+	    this.updateid = window.requestAnimationFrame( this.updateLoop.bind(this), this.viewport );
+
+	}; //gameCore.updateLoop
 }
-
-
-
-
 
 if (typeof(module) !== 'undefined') module.exports = gameCore;
