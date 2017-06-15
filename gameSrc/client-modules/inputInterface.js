@@ -1,7 +1,13 @@
-var socket = io();
+
 var inputInterface = {
 	direction:0,
-	movement:false
+	movement:false,
+	socket:{},
+	start:function(socket){
+		this.socket=socket;
+		document.addEventListener( 'keydown', inputInterface.onKeyDown, false );
+		document.addEventListener( 'keyup', inputInterface.onKeyUp, false );
+	}
 };
 
 console.log("start input interface");
@@ -76,7 +82,7 @@ inputInterface.updateMovement = function(){
 	if (_xaxis===-1 && _yaxis===-1) _direction = 5;
 	if(this.direction != _direction){
 		this.direction = _direction;
-		socket.emit('direction change', this.direction, socket.io.engine.id);
+		this.socket.emit('direction change', this.direction, this.socket.io.engine.id);
 	}
 	//movement
 	var _movement = this.movement;
@@ -88,7 +94,7 @@ inputInterface.updateMovement = function(){
 	}
 	if(this.movement != _movement){
 		this.movement = _movement;
-		socket.emit('movement change', this.movement, socket.io.engine.id);
+		this.socket.emit('movement change', this.movement, this.socket.io.engine.id);
 	}
 }
 
@@ -107,11 +113,10 @@ inputInterface.movementCheck = function(){
 	if (_xaxis===-1 && _yaxis===-1) _direction = 5;
 	if(this.direction != _direction){
 		this.direction = _direction;
-		socket.emit('direction change', this.direction, socket.io.engine.id);
+		this.socket.emit('direction change', this.direction, this.socket.io.engine.id);
 	}
 }
 
-document.addEventListener( 'keydown', inputInterface.onKeyDown, false );
-document.addEventListener( 'keyup', inputInterface.onKeyUp, false );
+
 
 if (typeof(module) !== 'undefined') module.exports = inputInterface;

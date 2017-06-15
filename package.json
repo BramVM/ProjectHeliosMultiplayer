@@ -19,6 +19,7 @@
     "uglify-js": "^2.5.0",
     "uglifyify": "^3.0.1",
     "underscore": "latest",
-    "watchify": "latest"
+    "watchify": "latest",
+    "three": "^0.73.0"
   }
 }
