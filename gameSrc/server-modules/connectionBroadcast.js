@@ -18,15 +18,16 @@ connectionBroadcast = {
 	playersToAdd:[],
 	playersToRemove:[],
 	players:[],
-	updatePackage : new updatePackage([],false),
+	bufferedUpdatePackage : new updatePackage([],false),
 	getUpdatePackage: function(){
-		if(connectionBroadcast.updatePackage.fresh){
-			connectionBroadcast.updatePackage.fresh = false;
-			return connectionBroadcast.updatePackage;
+		if(connectionBroadcast.bufferedUpdatePackage.fresh){
+			connectionBroadcast.bufferedUpdatePackage.fresh = false;
+			connectionBroadcast.players = connectionBroadcast.bufferedUpdatePackage.players;
 		}
 	},
-	sentUpdatePackage: function(io, updatePackage){
-		io.sockets.emit("updatePackage", updatePackage);
+	sentUpdatePackage: function(io){
+		_updatePackage = new updatePackage(connectionBroadcast.players,true);
+		io.sockets.emit("updatePackage", _updatePackage);
 	},
 	listenToClients: function(io){
 		//add connection event
@@ -59,9 +60,9 @@ connectionBroadcast = {
 	},
 	listenToServer: function(socket){
 		socket.on('updatePackage', function(updatePackage){
-			connectionBroadcast.updatePackage = updatePackage;
+			connectionBroadcast.bufferedUpdatePackage = updatePackage;
         });
-	},
+	}/*,
 	updatePlayers: function(players){
 		_players = players
 		//removed buffered players to delete
@@ -81,6 +82,6 @@ connectionBroadcast = {
 		}
 		connectionBroadcast.playersToAdd=[];
 		return _players;
-	}
+	}*/
 }
 if (typeof(module) !== 'undefined') module.exports = connectionBroadcast;

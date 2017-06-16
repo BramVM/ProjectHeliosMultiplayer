@@ -29,9 +29,10 @@ var gameCore = function(isServer,io){
 			this.inputInterface.start(this.clientSocket);
 			//listen to connection & disconnection of players
 			this.connectionBroadcast.listenToServer(this.clientSocket);
+			this.connectionBroadcast.update
 
 			this.viewport = document.getElementById("viewport");
-			this.context = viewport.getContext("2d");
+			this.context = this.viewport.getContext("2d");
 
 
 			
@@ -58,39 +59,58 @@ var gameCore = function(isServer,io){
 	this.updateLoop = function(t) {
 		
 		//Work out the delta time
-	    this.dt = this.lastframetime ? ( (t - this.lastframetime)/1000.0) : 0.016;
+	    this.dt = this.lastframetime ? ( (t - this.lastframetime)/1000) : 0.01666;
 	    
 	    //Store the last frame time
 	    this.lastframetime = t;
 	    
 	    //Update the game specifics
-	    this.players = this.connectionBroadcast.players;
-
-	    
+	    //this.players = this.connectionBroadcast.players;
+	    console.log(this.dt);
 		if(this.runningOnClient) {
+			//get local userinterface vaiables
+			_players = this.connectionBroadcast.players;
+			for (var i = _players.length - 1; i >= 0; i--) {
+				if(_players[i].id === this.inputInterface.userId){
+					_players[i].direction = this.inputInterface.direction;
+					_players[i].movement = this.inputInterface.movement;
+				}
+				if(_players.movement) _players.position.x = _players.position.x + 75*this.dt;
+			}
+			this.connectionBroadcast.players = _players;
 			//get players update package
-			if(this.connectionBroadcast.updatePackage.fresh){
-				this.players = this.connectionBroadcast.getUpdatePackage().players;
-				console.log(this.players.length);
+			if(this.connectionBroadcast.bufferedUpdatePackage.fresh){
+				this.connectionBroadcast.getUpdatePackage();
+				//console.log(this.players[0].position.x);
 			}
 		}
 
+
+		if(this.runningOnServer) {
+			for (var i = this.connectionBroadcast.players.length - 1; i >= 0; i--) {
+				if(this.connectionBroadcast.players[i].movement) this.connectionBroadcast.players[i].position.x = this.connectionBroadcast.players[i].position.x + 75*this.dt;
+			}
+		}
 	    //console.log(this.updateid);
+	    
 	    if(this.runningOnClient){
+
+	    	//draw visuals
 	    	this.context.clearRect(0, 0, 1000, 1000);
-		    for (var i = this.players.length - 1; i >= 0; i--) {
-				_player = this.players[i];
-				if(_player.movement) _player.position.x = _player.position.x + 1;
-				this.context.rect(_player.position.x,_player.position.y,10,10);
+	    	this.context.beginPath();
+		    this.context.closePath();
+	    	//console.log('draw '+ this.connectionBroadcast.players.length + ' players');
+		    for (var i = this.connectionBroadcast.players.length - 1; i >= 0; i--) {
+				this.context.rect(this.connectionBroadcast.players[i].position.x,this.connectionBroadcast.players[i].position.y,10,10);
 				this.context.stroke();
 			}
+
 		}
 
 		
 		if(this.runningOnServer) {
 			//sent update package to players
-			_updatePackage = new updatePackage(this.players,true);
-			this.connectionBroadcast.sentUpdatePackage(io,_updatePackage);
+			this.connectionBroadcast.sentUpdatePackage(io);
 		}
 	    
 	    //schedule the next update

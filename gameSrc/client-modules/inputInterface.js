@@ -2,12 +2,14 @@
 var inputInterface = {
 	direction:0,
 	movement:false,
+	userId: false,
 	socket:{},
 	start:function(socket){
 		this.socket=socket;
+		this.userId=socket.id;
 		document.addEventListener( 'keydown', inputInterface.onKeyDown, false );
 		document.addEventListener( 'keyup', inputInterface.onKeyUp, false );
-	}
+	},
 };
 
 console.log("start input interface");
