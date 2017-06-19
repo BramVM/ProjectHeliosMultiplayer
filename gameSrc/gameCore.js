@@ -5,7 +5,6 @@ var updatePackage = function(players,fresh){
 var gameCore = function(isServer,io){
 	this.runningOnServer = isServer;
 	this.runningOnClient = !isServer;
-	this.players = [];
 	this.connectionBroadcast = require('./server-modules/connectionBroadcast.js');
 	this.start = function(){
 
@@ -17,8 +16,7 @@ var gameCore = function(isServer,io){
 		console.log("Is this instance running on the server? : " + this.runningOnServer);
 
 		if(this.runningOnServer){//if this instance of the game is running on the server
-			
-			//listen to connection & disconnection of players
+			//
 			this.connectionBroadcast.listenToClients(io);
 		}
 
@@ -29,27 +27,9 @@ var gameCore = function(isServer,io){
 			this.inputInterface.start(this.clientSocket);
 			//listen to connection & disconnection of players
 			this.connectionBroadcast.listenToServer(this.clientSocket);
-			this.connectionBroadcast.update
-
+			//prepare canvas
 			this.viewport = document.getElementById("viewport");
 			this.context = this.viewport.getContext("2d");
-
-
-			
-
-			
-		    /*var renderer = new THREE.WebGLRenderer({
-				antialias   : true, // to get smoother output
-				preserveDrawingBuffer : true  // to allow screenshot
-			});
-		    renderer.setPixelRatio( window.devicePixelRatio );
-		    renderer.setSize( window.innerWidth, window.innerHeight );
-		    this.viewport.appendChild( renderer.domElement );
-		    //cam
-		    camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
-		    camera.position.z = 2500;
-		    console.log(renderer.info);*/
-
 		}
 
 		//start the gameloop
@@ -60,13 +40,11 @@ var gameCore = function(isServer,io){
 		
 		//Work out the delta time
 	    this.dt = this.lastframetime ? ( (t - this.lastframetime)/1000) : 0.01666;
-	    
 	    //Store the last frame time
 	    this.lastframetime = t;
 	    
 	    //Update the game specifics
-	    //this.players = this.connectionBroadcast.players;
-	    console.log(this.dt);
+	    //console.log(this.dt);
 		if(this.runningOnClient) {
 			//get local userinterface vaiables
 			_players = this.connectionBroadcast.players;
@@ -78,13 +56,13 @@ var gameCore = function(isServer,io){
 				if(_players.movement) _players.position.x = _players.position.x + 75*this.dt;
 			}
 			this.connectionBroadcast.players = _players;
+
 			//get players update package
 			if(this.connectionBroadcast.bufferedUpdatePackage.fresh){
 				this.connectionBroadcast.getUpdatePackage();
 				//console.log(this.players[0].position.x);
 			}
 		}
-
 
 		if(this.runningOnServer) {
 			for (var i = this.connectionBroadcast.players.length - 1; i >= 0; i--) {
