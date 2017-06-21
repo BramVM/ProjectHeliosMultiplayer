@@ -1,3 +1,5 @@
+
+
 var updatePackage = function(players,fresh){
 	this.players = players;
 	this.fresh = fresh;
@@ -21,15 +23,19 @@ var gameCore = function(isServer,io){
 		}
 
 		if(this.runningOnClient){ //if this instance of the game is running on the client
-			this.clientSocket = io();
 			//handle client input
-			this.inputInterface = require('./client-modules/inputInterface.js');
+			var inputInterface = require('./client-modules/inputInterface.js');
+			this.inputInterface = new inputInterface();
+			this.clientSocket = io();
+			//this.inputInterface.userId
 			this.inputInterface.start(this.clientSocket);
 			//listen to connection & disconnection of players
 			this.connectionBroadcast.listenToServer(this.clientSocket);
 			//prepare canvas
 			this.viewport = document.getElementById("viewport");
 			this.context = this.viewport.getContext("2d");
+			this.context.canvas.width  = window.innerWidth;
+  			this.context.canvas.height = window.innerHeight;
 		}
 
 		//start the gameloop
@@ -53,7 +59,7 @@ var gameCore = function(isServer,io){
 					_players[i].direction = this.inputInterface.direction;
 					_players[i].movement = this.inputInterface.movement;
 				}
-				if(_players.movement) _players.position.x = _players.position.x + 75*this.dt;
+				if(_players[i].movement) _players[i].position.x = _players[i].position.x + 75*this.dt;
 			}
 			this.connectionBroadcast.players = _players;
 
@@ -74,7 +80,7 @@ var gameCore = function(isServer,io){
 	    if(this.runningOnClient){
 
 	    	//draw visuals
-	    	this.context.clearRect(0, 0, 1000, 1000);
+	    	this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
 	    	this.context.beginPath();
 		    this.context.closePath();
 	    	//console.log('draw '+ this.connectionBroadcast.players.length + ' players');
