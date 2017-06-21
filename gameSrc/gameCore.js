@@ -32,10 +32,9 @@ var gameCore = function(isServer,io){
 			//listen to connection & disconnection of players
 			this.connectionBroadcast.listenToServer(this.clientSocket);
 			//prepare canvas
-			this.viewport = document.getElementById("viewport");
-			this.context = this.viewport.getContext("2d");
-			this.context.canvas.width  = window.innerWidth;
-  			this.context.canvas.height = window.innerHeight;
+			var canvasInterface = require('./client-modules/canvasInterface.js');
+			this.canvasInterface = new canvasInterface();
+			this.canvasInterface.start(document.getElementById("viewport"));
 		}
 
 		//start the gameloop
@@ -58,6 +57,7 @@ var gameCore = function(isServer,io){
 				if(_players[i].id === this.inputInterface.userId){
 					_players[i].direction = this.inputInterface.direction;
 					_players[i].movement = this.inputInterface.movement;
+					this.currentPlayer = _players[i];
 				}
 				if(_players[i].movement) _players[i].position.x = _players[i].position.x + 75*this.dt;
 			}
@@ -77,17 +77,14 @@ var gameCore = function(isServer,io){
 		}
 	    //console.log(this.updateid);
 	    
-	    if(this.runningOnClient){
+	    if(this.runningOnClient && this.currentPlayer){
 
 	    	//draw visuals
-	    	this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
-	    	this.context.beginPath();
-		    this.context.closePath();
+	    	this.canvasInterface.setPlayerPerspective(this.currentPlayer);
+	    	this.canvasInterface.clear();
+	    	this.canvasInterface.drawPlayers(this.connectionBroadcast.players);
 	    	//console.log('draw '+ this.connectionBroadcast.players.length + ' players');
-		    for (var i = this.connectionBroadcast.players.length - 1; i >= 0; i--) {
-				this.context.rect(this.connectionBroadcast.players[i].position.x,this.connectionBroadcast.players[i].position.y,10,10);
-				this.context.stroke();
-			}
+		    
 
 		}
 
