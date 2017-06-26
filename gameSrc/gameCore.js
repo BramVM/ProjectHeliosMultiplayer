@@ -80,7 +80,7 @@ var gameCore = function(isServer,io){
 	    if(this.runningOnClient && this.currentPlayer){
 
 	    	//draw visuals
-	    	this.canvasInterface.setPlayerPerspective(this.currentPlayer);
+	    	if (this.currentPlayer) this.canvasInterface.setPlayerPerspective(this.currentPlayer);
 	    	this.canvasInterface.clear();
 	    	this.canvasInterface.drawPlayers(this.connectionBroadcast.players);
 	    	//console.log('draw '+ this.connectionBroadcast.players.length + ' players');

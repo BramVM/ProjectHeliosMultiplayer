@@ -18,8 +18,8 @@ var canvasInterface = function () {
 	}
 	this.setPlayerPerspective = function(player){
 		self.perspectiveOffset = player.position;
-		self.perspectiveOffset.x = window.innerWidth - self.perspectiveOffset.x;
-		self.perspectiveOffset.y = window.innerHeight - self.perspectiveOffset.y
+		self.perspectiveOffset.x = window.innerWidth/2 - self.perspectiveOffset.x;
+		self.perspectiveOffset.y = window.innerHeight/2 - self.perspectiveOffset.y
 	}
 	this.drawPlayers = function(players){
 		for (var i = players.length - 1; i >= 0; i--) {
