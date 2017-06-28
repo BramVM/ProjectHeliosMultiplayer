@@ -1,10 +1,10 @@
 var cord = require("../prototypes/cord.js");
 
-var player = function(id){
+var player = function(id, direction, movement, position){
 	this.id = id;
-	this.direction = 0;
-	this.movement = false;
+	this.direction = direction;
+	this.movement = movement;
 	this.speed = 10;
-	this.position = new cord (0,0);
+	this.position = new cord (position.x,position.y);
 };
 if (typeof(module) !== 'undefined') module.exports = player;

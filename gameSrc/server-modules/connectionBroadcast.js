@@ -21,8 +21,14 @@ connectionBroadcast = {
 	bufferedUpdatePackage : new updatePackage([],false),
 	getUpdatePackage: function(){
 		if(connectionBroadcast.bufferedUpdatePackage.fresh){
+			_updatePackage = connectionBroadcast.bufferedUpdatePackage;
 			connectionBroadcast.bufferedUpdatePackage.fresh = false;
-			connectionBroadcast.players = connectionBroadcast.bufferedUpdatePackage.players;
+			//update game vars 
+			connectionBroadcast.players = [];
+			for (var i = connectionBroadcast.bufferedUpdatePackage.players.length - 1; i >= 0; i--) {
+				_player = new player(connectionBroadcast.bufferedUpdatePackage.players[i].id, connectionBroadcast.bufferedUpdatePackage.players[i].direction, connectionBroadcast.bufferedUpdatePackage.players[i].movement, connectionBroadcast.bufferedUpdatePackage.players[i].position)
+				connectionBroadcast.players.push(_player);
+			}
 		}
 	},
 	sentUpdatePackage: function(io){
@@ -32,7 +38,8 @@ connectionBroadcast = {
 	listenToClients: function(io){
 		//add connection event
 		io.on('connection', function(socket){
-			var _player = new player(socket.id)
+			var _position = {x:0,y:0};
+			var _player = new player(socket.id, 0, false, _position)
 			//add this player to the in buffer
 			//connectionBroadcast.playersToAdd.push(_player);
 		 	console.log('a user connected ' + socket.id);
@@ -62,26 +69,6 @@ connectionBroadcast = {
 		socket.on('updatePackage', function(updatePackage){
 			connectionBroadcast.bufferedUpdatePackage = updatePackage;
         });
-	}/*,
-	updatePlayers: function(players){
-		_players = players
-		//removed buffered players to delete
-		for (var i = this.playersToRemove.length - 1; i >= 0; i--) {
-			removeFromObjectArrayByProperty(players,"id",this.playersToRemove[i].id)
-		}
-		this.playersToRemove[i]=[];
-		//get buffered addable players
-		for (var i = connectionBroadcast.playersToAdd.length - 1; i >= 0; i--) {
-			_alreadyListed = false;
-			for (var j = players.length - 1; j >= 0; j--) {
-				if (players[j].id === connectionBroadcast.playersToAdd[i].id){
-					_alreadyListed = true;
-				}
-			}
-			if(!_alreadyListed) _players.push(connectionBroadcast.playersToAdd[i]);
-		}
-		connectionBroadcast.playersToAdd=[];
-		return _players;
-	}*/
+	}
 }
 if (typeof(module) !== 'undefined') module.exports = connectionBroadcast;

@@ -48,44 +48,38 @@ var gameCore = function(isServer,io){
 	    //Store the last frame time
 	    this.lastframetime = t;
 	    
-	    //Update the game specifics
-	    //console.log(this.dt);
 		if(this.runningOnClient) {
-			//get local userinterface vaiables
+			this.connectionBroadcast.getUpdatePackage();
+			//get local and instantly apply userinterface vaiables
 			_players = this.connectionBroadcast.players;
 			for (var i = _players.length - 1; i >= 0; i--) {
-				if(_players[i].id === this.inputInterface.userId){
+				if(_players[i].id === this.inputInterface.userId){ //find current player
 					_players[i].direction = this.inputInterface.direction;
 					_players[i].movement = this.inputInterface.movement;
 					this.currentPlayer = _players[i];
 				}
-				if(_players[i].movement) _players[i].position.x = _players[i].position.x + 75*this.dt;
 			}
 			this.connectionBroadcast.players = _players;
-
-			//get players update package
-			if(this.connectionBroadcast.bufferedUpdatePackage.fresh){
-				this.connectionBroadcast.getUpdatePackage();
-				//console.log(this.players[0].position.x);
-			}
 		}
 
-		if(this.runningOnServer) {
-			for (var i = this.connectionBroadcast.players.length - 1; i >= 0; i--) {
-				if(this.connectionBroadcast.players[i].movement) this.connectionBroadcast.players[i].position.x = this.connectionBroadcast.players[i].position.x + 75*this.dt;
-			}
+		//game logic (is run on all instances)
+		for (var i = this.connectionBroadcast.players.length - 1; i >= 0; i--) {
+			var _angle = this.connectionBroadcast.players[i].direction*Math.PI/4-Math.PI/2
+			if(this.connectionBroadcast.players[i].movement) this.connectionBroadcast.players[i].position.moveByDistanceAndAngle(75*this.dt,_angle);
 		}
-	    //console.log(this.updateid);
-	    
+
+		//if there is a new update package ready overwrite gamestate using the package
+		if(this.runningOnClient) {
+			
+		}
+
+	    //draw visuals
 	    if(this.runningOnClient && this.currentPlayer){
-
-	    	//draw visuals
 	    	if (this.currentPlayer) this.canvasInterface.setPlayerPerspective(this.currentPlayer);
 	    	this.canvasInterface.clear();
+	    	this.canvasInterface.backGround();
 	    	this.canvasInterface.drawPlayers(this.connectionBroadcast.players);
 	    	//console.log('draw '+ this.connectionBroadcast.players.length + ' players');
-		    
-
 		}
 
 		
