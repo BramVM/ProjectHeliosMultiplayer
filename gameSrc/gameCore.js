@@ -68,11 +68,6 @@ var gameCore = function(isServer,io){
 			if(this.connectionBroadcast.players[i].movement) this.connectionBroadcast.players[i].position.moveByDistanceAndAngle(75*this.dt,_angle);
 		}
 
-		//if there is a new update package ready overwrite gamestate using the package
-		if(this.runningOnClient) {
-			
-		}
-
 	    //draw visuals
 	    if(this.runningOnClient && this.currentPlayer){
 	    	if (this.currentPlayer) this.canvasInterface.setPlayerPerspective(this.currentPlayer);
