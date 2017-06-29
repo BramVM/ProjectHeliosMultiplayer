@@ -6,7 +6,7 @@ var UglifyJS = require('uglify-js');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var bundler = browserify(__dirname + '/gameSrc/clientScript.js');
+var bundler = browserify(__dirname + '/clientScript.js');
 
 bundler.transform({
   global: true
@@ -38,9 +38,7 @@ bundler.bundle()
 
 function runServer (){
 	app.set('port', (process.env.PORT || 5000));
-
 	app.use(express.static(__dirname + '/'));
-
 	app.get('/', function(request, response) {
 	  response.render('index');
 	});

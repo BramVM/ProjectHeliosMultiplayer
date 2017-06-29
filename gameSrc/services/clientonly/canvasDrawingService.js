@@ -1,4 +1,4 @@
-var cord = require("../prototypes/cord.js");
+var cord = require("../../prototypes/cord.js");
 var seedrandom = require('seedrandom');
 
 var canvasInterface = function () {
@@ -29,7 +29,7 @@ var canvasInterface = function () {
 			self.context.stroke();
 		}
 	}
-	this.backGround = function(){
+	this.drawBackground = function(){
 		Math.seedrandom(self.perspectiveOffset.x)
 		randomX = 2000-Math.random()*4000;
 

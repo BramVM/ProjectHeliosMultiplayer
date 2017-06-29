@@ -1,13 +1,8 @@
 
-
-var updatePackage = function(players,fresh){
-	this.players = players;
-	this.fresh = fresh;
-};
 var gameCore = function(isServer,io){
 	this.runningOnServer = isServer;
 	this.runningOnClient = !isServer;
-	this.connectionBroadcast = require('./server-modules/connectionBroadcast.js');
+	this.ioConnectionService = require('./services/ioConnectionService.js');
 	this.start = function(){
 
 		//polyfill for requestAnimationFrame (stole this from threeJs)
@@ -18,23 +13,23 @@ var gameCore = function(isServer,io){
 		console.log("Is this instance running on the server? : " + this.runningOnServer);
 
 		if(this.runningOnServer){//if this instance of the game is running on the server
-			//
-			this.connectionBroadcast.listenToClients(io);
+			//listen to io stream for updates sent by clients
+			this.ioConnectionService.listenToClients(io);
 		}
 
 		if(this.runningOnClient){ //if this instance of the game is running on the client
 			//handle client input
-			var inputInterface = require('./client-modules/inputInterface.js');
-			this.inputInterface = new inputInterface();
+			var inputInterfaceService = require('./services/clientonly/inputInterfaceService.js');
+			this.inputInterfaceService = new inputInterfaceService();
 			this.clientSocket = io();
-			//this.inputInterface.userId
-			this.inputInterface.start(this.clientSocket);
-			//listen to connection & disconnection of players
-			this.connectionBroadcast.listenToServer(this.clientSocket);
+			//this.inputInterfaceService.userId
+			this.inputInterfaceService.start(this.clientSocket);
+			//listen to server for update packages
+			this.ioConnectionService.listenToServer(this.clientSocket);
 			//prepare canvas
-			var canvasInterface = require('./client-modules/canvasInterface.js');
-			this.canvasInterface = new canvasInterface();
-			this.canvasInterface.start(document.getElementById("viewport"));
+			var canvasDrawingService = require('./services/clientonly/canvasDrawingService.js');
+			this.canvasDrawingService = new canvasDrawingService();
+			this.canvasDrawingService.start(document.getElementById("viewport"));
 		}
 
 		//start the gameloop
@@ -49,38 +44,39 @@ var gameCore = function(isServer,io){
 	    this.lastframetime = t;
 	    
 		if(this.runningOnClient) {
-			this.connectionBroadcast.getUpdatePackage();
-			//get local and instantly apply userinterface vaiables
-			_players = this.connectionBroadcast.players;
+			//check for new update package and aply
+			this.ioConnectionService.getUpdatePackage();
+			//get local input and instantly apply userinterface vaiables
+			_players = this.ioConnectionService.players;
 			for (var i = _players.length - 1; i >= 0; i--) {
-				if(_players[i].id === this.inputInterface.userId){ //find current player
-					_players[i].direction = this.inputInterface.direction;
-					_players[i].movement = this.inputInterface.movement;
+				if(_players[i].id === this.inputInterfaceService.userId){ //find current player
+					_players[i].direction = this.inputInterfaceService.direction;
+					_players[i].movement = this.inputInterfaceService.movement;
 					this.currentPlayer = _players[i];
 				}
 			}
-			this.connectionBroadcast.players = _players;
+			this.ioConnectionService.players = _players;
 		}
 
 		//game logic (is run on all instances)
-		for (var i = this.connectionBroadcast.players.length - 1; i >= 0; i--) {
-			var _angle = this.connectionBroadcast.players[i].direction*Math.PI/4-Math.PI/2
-			if(this.connectionBroadcast.players[i].movement) this.connectionBroadcast.players[i].position.moveByDistanceAndAngle(75*this.dt,_angle);
+		for (var i = this.ioConnectionService.players.length - 1; i >= 0; i--) {
+			var _angle = this.ioConnectionService.players[i].direction*Math.PI/4-Math.PI/2
+			if(this.ioConnectionService.players[i].movement) this.ioConnectionService.players[i].position.moveByDistanceAndAngle(75*this.dt,_angle);
 		}
 
 	    //draw visuals
 	    if(this.runningOnClient && this.currentPlayer){
-	    	if (this.currentPlayer) this.canvasInterface.setPlayerPerspective(this.currentPlayer);
-	    	this.canvasInterface.clear();
-	    	this.canvasInterface.backGround();
-	    	this.canvasInterface.drawPlayers(this.connectionBroadcast.players);
-	    	//console.log('draw '+ this.connectionBroadcast.players.length + ' players');
+	    	if (this.currentPlayer) this.canvasDrawingService.setPlayerPerspective(this.currentPlayer);
+	    	this.canvasDrawingService.clear();
+	    	this.canvasDrawingService.drawBackground();
+	    	this.canvasDrawingService.drawPlayers(this.ioConnectionService.players);
+	    	//console.log('draw '+ this.ioConnectionService.players.length + ' players');
 		}
 
 		
 		if(this.runningOnServer) {
-			//sent update package to players
-			this.connectionBroadcast.sentUpdatePackage(io);
+			//create and send new update package to clients
+			this.ioConnectionService.sentUpdatePackage(io);
 		}
 	    
 	    //schedule the next update

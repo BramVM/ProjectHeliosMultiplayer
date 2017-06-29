@@ -6,7 +6,7 @@ var UglifyJS = require('uglify-js');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var bundler = browserify(__dirname + '/gameSrc/clientScript.js');
+var bundler = browserify(__dirname + '/clientScript.js');
 
 bundler.bundle()
   .pipe(fs.createWriteStream(__dirname + '/bundle.js')

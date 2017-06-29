@@ -1,11 +1,9 @@
 
+//var player = require("../prototypes/player.js");
 var player = require("../prototypes/player.js");
-//var player = require("/prototypes/player.js");
+var updatePackage = require("../prototypes/updatePackage.js");
 
-var updatePackage = function(players,fresh){
-	this.players = players;
-	this.fresh = fresh;
-};
+
 function removeFromObjectArrayByProperty(array,prop,value){
 	for (var i = 0; i<=array.length-1; i++) {
 		if(array[i][prop] === value){
