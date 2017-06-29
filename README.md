@@ -1,6 +1,6 @@
 Description
 ==============
-A javascript - multyplayer - sandbox - space - survival - exploring - crafting - trading - managing - browser gameproject. The idea is to create a modular browser game  that is desinged to be very open for new features.
+A javascript - multyplayer - procedurally generated - sandbox - space - survival - exploring - crafting - trading - managing - browser gameproject. The idea is to create a modular browser game  that is desinged to be very open for new features.
 
 Get started
 ==============

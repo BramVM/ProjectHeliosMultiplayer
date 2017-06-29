@@ -1,4 +1,7 @@
 Notes to self:
+
+Find good way to use modular services and dependency injection (not require) (important foor modding platform)
+
 Performance issue collision of bullets.
 Checking for collision of every bullet with anything on each frame tick consumes alot of resources. (to much)
 improvement idea: predict wich target might get hit and onely check for collision with those targets
