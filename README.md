@@ -1,6 +1,6 @@
 Description
 ==============
-A javascript-only - sandbox - space - survival - exploring - crafting - trading - managing - multyplayer - browser game. The idea is to create a modular browser game that is desinged to be very open for new features.
+A javascript - multyplayer - sandbox - space - survival - exploring - crafting - trading - managing - browser gameproject. The idea is to create a modular browser game  that is desinged to be very open for new features.
 
 Get started
 ==============
@@ -13,7 +13,7 @@ Get started
 Documentation
 ==============
 
-Understanding of NodeServer script
+NodeServer script explained
 --------------
 - Bundles the javascript game-files to a single js file (to use in index.html on clients)
 - Uglyfies & minifies this bundeled js file.
@@ -30,14 +30,14 @@ Highlevel understanding of the game-concept
 - Since client and server loops run at diffrent freequencies, all speed is calculated in pixels per seconds instead of pixels per frame. Do do this, we first get the delta time between each frame in sec and multiply movement by this number. (istead of doin something like this: x=x+speed, we do this: x=x+speed*dt, where dt is delta time)
 - On client-side we use a single html page with a single canvas-element as output and basic javascript document event listeners as input.
 
-Understanding of client loop
+Client loop explained
 --------------
 - Check if the server sent us a new update-package and if soo reset gamestate to this
 - If this user changed the gamestate variables using the userinterface(pressing buttons), apply these directly to current gamestate.
 - Calculate new gamestate based on the input varaibles. (this is where we code our game)
 - Update the visuals (redraw canvas based on gamestate)
 
-Understanding of server loop
+Server loop explained
 --------------
 - Calculate new gamestate based on the input varaibles.
 - Make and sent update package to clients
