@@ -2,6 +2,11 @@ Notes to self:
 
 Find good way to use modular services and dependency injection (not require) (important foor modding platform)
 
+Wil draw ship on canvas by bezier curves so the art will be very open for prcedural generation.
+
+How to define planet textures
+
+
 Performance issue collision of bullets.
 Checking for collision of every bullet with anything on each frame tick consumes alot of resources. (to much)
 improvement idea: predict wich target might get hit and onely check for collision with those targets

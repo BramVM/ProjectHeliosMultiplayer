@@ -10,7 +10,7 @@ Get started
 - Then type "node start" or "node run debug" to start the server and serve the web page on localhost.
 - Open your browser and go to "http://localhost:5000". Note: the port might change during development but the node script will tell you which port it is served on.
 
-Documentation
+Basic Documentation
 ==============
 
 NodeServer script explained
