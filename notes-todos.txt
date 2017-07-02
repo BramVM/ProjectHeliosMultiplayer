@@ -12,3 +12,8 @@ Checking for collision of every bullet with anything on each frame tick consumes
 improvement idea: predict wich target might get hit and onely check for collision with those targets
 improvement idea: on fire predict if and when the bullet is going to hit something based on known variables and update the prediction when those variables change. (tricky to predict, do we know all needed variables?)
 improvement idea: change the gameplay and combatSystem so fire always requires target lockon and bullets are just fast cosmetic particles
+
+-Games to check
+EliteDangerous
+Subspace Continuum
+Sid Meier's Pirates

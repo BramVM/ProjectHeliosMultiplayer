@@ -3,19 +3,28 @@ var seedrandom = require('seedrandom');
 
 var canvasInterface = function () {
 	self = this;
-	this.viewport = {};
-	this.context = {};
+	this.layer1 = {};
+	this.layer1.context = {};
+	this.layer2 = {};
+	this.layer2.context = {};
 	this.perspectiveOffset = new cord();
-	this.start = function( canvaselement){
-		this.viewport = canvaselement;
-		this.context = this.viewport.getContext("2d");
-		this.context.canvas.width  = window.innerWidth;
-  		this.context.canvas.height = window.innerHeight;
+	this.start = function( layer1, layer2 ){
+		this.layer1 = layer1;
+		this.layer2 = layer2;
+		this.layer1.context = this.layer1.getContext("2d");
+		this.layer1.context.canvas.width  = window.innerWidth;
+  		this.layer1.context.canvas.height = window.innerHeight;
+  		this.layer2.context = this.layer2.getContext("2d");
+		this.layer2.context.canvas.width  = window.innerWidth;
+  		this.layer2.context.canvas.height = window.innerHeight;
 	}
 	this.clear = function(){
-		self.context.clearRect(0, 0, self.context.canvas.width, self.context.canvas.height);
-		self.context.beginPath();
-		self.context.closePath();
+		self.layer1.context.clearRect(0, 0, self.layer1.context.canvas.width, self.layer1.context.canvas.height);
+		self.layer1.context.beginPath();
+		self.layer1.context.closePath();
+		self.layer2.context.clearRect(0, 0, self.layer1.context.canvas.width, self.layer1.context.canvas.height);
+		self.layer2.context.beginPath();
+		self.layer2.context.closePath();
 	}
 	this.setPlayerPerspective = function(player){
 		self.perspectiveOffset = new cord(player.position.x, player.position.y);
@@ -25,21 +34,55 @@ var canvasInterface = function () {
 	}
 	this.drawPlayers = function(players){
 		for (var i = players.length - 1; i >= 0; i--) {
-			self.context.rect(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y,10,10);
-			self.context.stroke();
+			self.layer1.context.rect(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y,10,10);
+			self.layer1.context.stroke();
 		}
 	}
 	this.drawBackground = function(){
 		Math.seedrandom(self.perspectiveOffset.x)
 		randomX = 2000-Math.random()*4000;
 
-		var _grd=self.context.createRadialGradient(Math.sin(self.perspectiveOffset.x),self.perspectiveOffset.y,5,Math.sin(self.perspectiveOffset.x),self.perspectiveOffset.y,1000);
+		var _grd=self.layer1.context.createRadialGradient(Math.sin(self.perspectiveOffset.x),self.perspectiveOffset.y,5,Math.sin(self.perspectiveOffset.x),self.perspectiveOffset.y,1000);
 		_grd.addColorStop(0,"red");
 		_grd.addColorStop(1,"transparent");
 
 		// Fill with gradient
-		self.context.fillStyle=_grd;
-		self.context.fillRect(0, 0, self.context.canvas.width, self.context.canvas.height);
+		
+	}
+	this.drawDarkness = function(players){
+		var _radialLightGradient=self.layer1.context.createRadialGradient(self.layer1.context.canvas.width/2,self.layer1.context.canvas.height/2,0,self.layer1.context.canvas.width/2,self.layer1.context.canvas.height/2,1000);
+		_radialLightGradient.addColorStop(0,"transparent");
+  		_radialLightGradient.addColorStop(1,"#000");
+
+  		//var fullCanvasPath = new Path2D();
+  		//radial darkness
+  		self.layer2.context.beginPath();
+  		self.layer2.context.moveTo(0, 0);
+  		self.layer2.context.lineTo(self.layer1.context.canvas.width, 0);
+		self.layer2.context.lineTo(self.layer1.context.canvas.width, self.layer1.context.canvas.height);
+		self.layer2.context.lineTo(0,self.layer1.context.canvas.height);
+		self.layer2.context.lineTo(0,0);
+		self.layer2.context.closePath();
+		self.layer2.context.fillStyle=_radialLightGradient;
+		self.layer2.context.fill();
+		//extract player headlights
+		self.layer2.context.globalCompositeOperation= "destination-out";
+		for (var i = players.length - 1; i >= 0; i--) {
+			if(players[i].headlight.state){
+				self.layer2.context.beginPath();
+				self.layer2.context.moveTo(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y);
+				self.layer2.context.arc(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y, players[i].headlight.range, players[i].direction*Math.PI/4-Math.PI/2-players[i].headlight.angle/2, players[i].direction*Math.PI/4-Math.PI/2+players[i].headlight.angle/2);
+				self.layer2.context.moveTo(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y);
+				self.layer2.context.closePath();
+				_spotLightGradient=self.layer1.context.createRadialGradient(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y,0,players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y,players[i].headlight.range);
+				_spotLightGradient.addColorStop(0,"#000");
+				_spotLightGradient.addColorStop(1,"transparent");
+				self.layer2.context.fillStyle=_spotLightGradient;
+				self.layer2.context.fill();
+			}
+			
+		}
+		self.layer2.context.globalCompositeOperation = "source-over";	
 	}
 }
 			

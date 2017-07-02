@@ -15,14 +15,19 @@
 		      overflow: hidden; /*  Disable scrollbars */
 		      display: block;  /* No floating content on sides */
 		    }
-			#viewport{
+			#layer1,#layer2{
+				position: absolute;
+				top:0;
+				left:0;
 				width: 100%;
 				height: 100%;
 			}
 		</style>
 	</head>
 	<body>
-		<canvas id="viewport">
+		<canvas id="layer1">
+		</canvas>
+		<canvas id="layer2">
 		</canvas>
 		<script src="bundle.js"></script>
 	</body>

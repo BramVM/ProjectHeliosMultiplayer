@@ -29,7 +29,7 @@ var gameCore = function(isServer,io){
 			//prepare canvas
 			var canvasDrawingService = require('./services/clientonly/canvasDrawingService.js');
 			this.canvasDrawingService = new canvasDrawingService();
-			this.canvasDrawingService.start(document.getElementById("viewport"));
+			this.canvasDrawingService.start(document.getElementById("layer1"),document.getElementById("layer2"));
 		}
 
 		//start the gameloop
@@ -70,6 +70,7 @@ var gameCore = function(isServer,io){
 	    	this.canvasDrawingService.clear();
 	    	this.canvasDrawingService.drawBackground();
 	    	this.canvasDrawingService.drawPlayers(this.ioConnectionService.players);
+	    	this.canvasDrawingService.drawDarkness(this.ioConnectionService.players);
 	    	//console.log('draw '+ this.ioConnectionService.players.length + ' players');
 		}
 
