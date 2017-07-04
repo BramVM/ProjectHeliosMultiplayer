@@ -69,6 +69,9 @@ var gameCore = function(isServer,io){
 	    	if (this.currentPlayer) this.canvasDrawingService.setPlayerPerspective(this.currentPlayer);
 	    	this.canvasDrawingService.clear();
 	    	this.canvasDrawingService.drawBackground();
+	    	_pos = {x:0,y:0};
+	    	this.canvasDrawingService.drawPlanet(_pos,100);
+	    	this.canvasDrawingService.drawRandomShape(this.currentPlayer);
 	    	this.canvasDrawingService.drawPlayers(this.ioConnectionService.players);
 	    	this.canvasDrawingService.drawDarkness(this.ioConnectionService.players);
 	    	//console.log('draw '+ this.ioConnectionService.players.length + ' players');
