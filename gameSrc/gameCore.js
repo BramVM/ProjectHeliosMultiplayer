@@ -74,7 +74,7 @@ var gameCore = function(isServer,io){
 	    	this.canvasDrawingService.drawPlanet(_pos,100);
 	    	this.canvasDrawingService.drawRandomShape(this.currentPlayer);
 	    	this.canvasDrawingService.drawPlayers(this.ioConnectionService.players);
-	    	this.canvasDrawingService.drawDarkness(this.ioConnectionService.players);
+	    	this.canvasDrawingService.drawDarkness(this.ioConnectionService.players,0.8);
 	    	//
 	    	this.worldGeneratorService.generateTilesOnPlayer(this.currentPlayer.position);
 	    	this.canvasDrawingService.drawWorld(this.worldGeneratorService.tiles, this.worldGeneratorService.gridSize);

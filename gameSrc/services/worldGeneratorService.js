@@ -7,8 +7,8 @@ var cord = require("../prototypes/cord.js");
 var worldGenerator = function(){
 	this.tiles = [];
 	this.gridSize = {
-		x:500,
-		y:500
+		x:1000,
+		y:1000
 	};
 	this.gridMatrixSize = 2;
 	this.checkNearestTilePosition = function (position){

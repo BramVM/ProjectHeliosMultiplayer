@@ -142,7 +142,7 @@ var canvasInterface = function () {
 		self.layer1.context.closePath();
 
 	}
-	this.drawDarkness = function(players){
+	this.drawDarkness = function(players, darkness){
 		//draw visual effect for lights
 		for (var i = players.length - 1; i >= 0; i--) {
 			if(players[i].headlight.state){
@@ -177,7 +177,7 @@ var canvasInterface = function () {
   		//var fullCanvasPath = new Path2D();
   		//radial darkness
   		var _radialLightGradient=self.layer1.context.createRadialGradient(self.layer1.context.canvas.width/2,self.layer1.context.canvas.height/2,0,self.layer1.context.canvas.width/2,self.layer1.context.canvas.height/2,1000);
-		_radialLightGradient.addColorStop(0,"transparent");
+		_radialLightGradient.addColorStop(0,"rgba(0, 0, 0, " + darkness +")");
   		_radialLightGradient.addColorStop(1,"#000");
   		self.layer2.context.beginPath();
   		self.layer2.context.moveTo(0, 0);
