@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Bram Van Mensel",
-  "license": "ISC",
+  "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
     "browserify": "^11.2.0",
     "express": "^4.13.0",
