@@ -39,13 +39,16 @@ var canvasInterface = function () {
 		}
 	}
 	this.drawBackground = function(){
-		Math.seedrandom(self.perspectiveOffset.x)
-		randomX = 2000-Math.random()*4000;
-
-		var _grd=self.layer1.context.createRadialGradient(Math.sin(self.perspectiveOffset.x),self.perspectiveOffset.y,5,Math.sin(self.perspectiveOffset.x),self.perspectiveOffset.y,1000);
-		_grd.addColorStop(0,"red");
-		_grd.addColorStop(1,"transparent");
-
+		
+		self.layer1.context.beginPath();
+  		self.layer1.context.moveTo(0, 0);
+  		self.layer1.context.lineTo(self.layer1.context.canvas.width, 0);
+		self.layer1.context.lineTo(self.layer1.context.canvas.width, self.layer1.context.canvas.height);
+		self.layer1.context.lineTo(0,self.layer1.context.canvas.height);
+		self.layer1.context.lineTo(0,0);
+		self.layer1.context.closePath();
+		self.layer1.context.fillStyle="#1C0221";
+		self.layer1.context.fill();
 		// Fill with gradient
 		
 	}
@@ -139,7 +142,7 @@ var canvasInterface = function () {
 		self.layer1.context.closePath();
 
 	}
-	this.drawDarkness = function(players){
+	this.drawDarkness = function(players, darkness){
 		//draw visual effect for lights
 		for (var i = players.length - 1; i >= 0; i--) {
 			if(players[i].headlight.state){
@@ -174,7 +177,7 @@ var canvasInterface = function () {
   		//var fullCanvasPath = new Path2D();
   		//radial darkness
   		var _radialLightGradient=self.layer1.context.createRadialGradient(self.layer1.context.canvas.width/2,self.layer1.context.canvas.height/2,0,self.layer1.context.canvas.width/2,self.layer1.context.canvas.height/2,1000);
-		_radialLightGradient.addColorStop(0,"transparent");
+		_radialLightGradient.addColorStop(0,"rgba(0, 0, 0, " + darkness +")");
   		_radialLightGradient.addColorStop(1,"#000");
   		self.layer2.context.beginPath();
   		self.layer2.context.moveTo(0, 0);
@@ -203,6 +206,15 @@ var canvasInterface = function () {
 			
 		}
 		self.layer2.context.globalCompositeOperation = "source-over";	
+	}
+	this.drawWorld = function(tiles,gridSize){
+		for (var i = tiles.length - 1; i >= 0; i--) {
+			self.layer1.context.beginPath();
+			self.layer1.context.rect(tiles[i].position.x+ self.perspectiveOffset.x,tiles[i].position.y+ self.perspectiveOffset.y,gridSize.x,gridSize.y);
+			self.layer1.context.closePath();
+			//self.layer1.context.rect(20,20,150,100);
+			self.layer1.context.stroke();
+		}
 	}
 }
 			

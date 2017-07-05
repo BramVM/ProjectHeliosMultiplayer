@@ -1,8 +1,9 @@
-
+worldGeneratorService = require('./services/worldGeneratorService.js');
 var gameCore = function(isServer,io){
 	this.runningOnServer = isServer;
 	this.runningOnClient = !isServer;
 	this.ioConnectionService = require('./services/ioConnectionService.js');
+	this.worldGeneratorService = new worldGeneratorService();
 	this.start = function(){
 
 		//polyfill for requestAnimationFrame (stole this from threeJs)
@@ -73,7 +74,10 @@ var gameCore = function(isServer,io){
 	    	this.canvasDrawingService.drawPlanet(_pos,100);
 	    	this.canvasDrawingService.drawRandomShape(this.currentPlayer);
 	    	this.canvasDrawingService.drawPlayers(this.ioConnectionService.players);
-	    	this.canvasDrawingService.drawDarkness(this.ioConnectionService.players);
+	    	this.canvasDrawingService.drawDarkness(this.ioConnectionService.players,0.8);
+	    	//
+	    	this.worldGeneratorService.generateTilesOnPlayer(this.currentPlayer.position);
+	    	this.canvasDrawingService.drawWorld(this.worldGeneratorService.tiles, this.worldGeneratorService.gridSize);
 	    	//console.log('draw '+ this.ioConnectionService.players.length + ' players');
 		}
 
