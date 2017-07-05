@@ -31,7 +31,7 @@ bundler.bundle()
   		fs.writeFileSync('bundle.js', result.code);
   		global.window = global.document = global;
       var gameCore = require('./gameSrc/gameCore.js');
-      var gameInstance = new gameCore(true);
+      var gameInstance = new gameCore(true, io);
       gameInstance.start();
   		runServer()
   	}));
