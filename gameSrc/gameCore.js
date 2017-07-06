@@ -1,9 +1,33 @@
-worldGeneratorService = require('./services/worldGeneratorService.js');
+//services
+var worldGeneratorService = require('./services/worldGeneratorService.js');
+var inputInterfaceService = require('./services/clientonly/inputInterfaceService.js');
+var canvasDrawingService = require('./services/clientonly/canvasDrawingService.js');
+var ioConnectionService = require('./services/ioConnectionService.js');
+var modService = require('./services/modService.js');
+//classes
+var color = require("./classes/color.js");
+var cord = require("./classes/cord.js");
+var player = require("./classes/player.js");
+var spotLight = require("./classes/spotLight.js");
+var logicPackage = require("./classes/logicPackage.js");
+//var visualsPackage = require("./classes/visualsPackage.js");
+//instantiate services
+var _worldGeneratorService = new worldGeneratorService(cord);
+var _ioConnectionService = new ioConnectionService(player,logicPackage);
+var _inputInterfaceService = new inputInterfaceService();
+var _canvasDrawingService = new canvasDrawingService(cord);
+
 var gameCore = function(isServer,io){
+	var self = this;
+	this.services = {
+		worldGeneratorService : _worldGeneratorService,
+		ioConnectionService : _ioConnectionService,
+		inputInterfaceService : _inputInterfaceService,
+		canvasDrawingService : _canvasDrawingService
+	};
 	this.runningOnServer = isServer;
 	this.runningOnClient = !isServer;
-	this.ioConnectionService = require('./services/ioConnectionService.js');
-	this.worldGeneratorService = new worldGeneratorService();
+	this.logicPackage = new logicPackage();
 	this.start = function(){
 
 		//polyfill for requestAnimationFrame (stole this from threeJs)
@@ -15,23 +39,23 @@ var gameCore = function(isServer,io){
 
 		if(this.runningOnServer){//if this instance of the game is running on the server
 			//listen to io stream for updates sent by clients
-			this.ioConnectionService.listenToClients(io);
+			this.services.ioConnectionService.listenToClients(io);
 		}
 
 		if(this.runningOnClient){ //if this instance of the game is running on the client
 			//handle client input
-			var inputInterfaceService = require('./services/clientonly/inputInterfaceService.js');
-			this.inputInterfaceService = new inputInterfaceService();
 			this.clientSocket = io();
-			//this.inputInterfaceService.userId
-			this.inputInterfaceService.start(this.clientSocket);
+			//this.services.inputInterfaceService.userId
+			this.services.inputInterfaceService.start(this.clientSocket);
 			//listen to server for update packages
-			this.ioConnectionService.listenToServer(this.clientSocket);
+			this.services.ioConnectionService.listenToServer(this.clientSocket);
 			//prepare canvas
-			var canvasDrawingService = require('./services/clientonly/canvasDrawingService.js');
-			this.canvasDrawingService = new canvasDrawingService();
-			this.canvasDrawingService.start(document.getElementById("layer1"),document.getElementById("layer2"));
+			
+			this.services.canvasDrawingService = _canvasDrawingService
+			this.services.canvasDrawingService.start(document.getElementById("layer1"),document.getElementById("layer2"));
 		}
+
+		this.services.modService = new modService(self);
 
 		//start the gameloop
 		this.updateLoop();
@@ -45,46 +69,48 @@ var gameCore = function(isServer,io){
 	    this.lastframetime = t;
 	    
 		if(this.runningOnClient) {
-			//check for new update package and aply
-			this.ioConnectionService.getUpdatePackage();
+			//check for new update package and apply
+			this.services.ioConnectionService.getLogicPackage();
 			//get local input and instantly apply userinterface vaiables
-			_players = this.ioConnectionService.players;
+			_players = this.services.ioConnectionService.players;
 			for (var i = _players.length - 1; i >= 0; i--) {
-				if(_players[i].id === this.inputInterfaceService.userId){ //find current player
-					_players[i].direction = this.inputInterfaceService.direction;
-					_players[i].movement = this.inputInterfaceService.movement;
+				if(_players[i].id === this.services.inputInterfaceService.userId){ //find current player
+					_players[i].direction = this.services.inputInterfaceService.direction;
+					_players[i].movement = this.services.inputInterfaceService.movement;
 					this.currentPlayer = _players[i];
 				}
 			}
-			this.ioConnectionService.players = _players;
+			this.services.ioConnectionService.players = _players;
 		}
 
-		//game logic (is run on all instances)
-		for (var i = this.ioConnectionService.players.length - 1; i >= 0; i--) {
-			var _angle = this.ioConnectionService.players[i].direction*Math.PI/4-Math.PI/2
-			if(this.ioConnectionService.players[i].movement) this.ioConnectionService.players[i].position.moveByDistanceAndAngle(75*this.dt,_angle);
+		//game logic goes here
+		for (var i = this.services.ioConnectionService.players.length - 1; i >= 0; i--) {
+			var _angle = this.services.ioConnectionService.players[i].direction*Math.PI/4-Math.PI/2
+			if(this.services.ioConnectionService.players[i].movement) this.services.ioConnectionService.players[i].position.moveByDistanceAndAngle(75*this.dt,_angle);
 		}
-
+		//allow mods so adjust gameState package
+		this.services.modService.updateLogicPackage();
 	    //draw visuals
 	    if(this.runningOnClient && this.currentPlayer){
-	    	if (this.currentPlayer) this.canvasDrawingService.setPlayerPerspective(this.currentPlayer);
-	    	this.canvasDrawingService.clear();
-	    	this.canvasDrawingService.drawBackground();
-	    	_pos = {x:0,y:0};
-	    	this.canvasDrawingService.drawPlanet(_pos,100);
-	    	this.canvasDrawingService.drawRandomShape(this.currentPlayer);
-	    	this.canvasDrawingService.drawPlayers(this.ioConnectionService.players);
-	    	this.canvasDrawingService.drawDarkness(this.ioConnectionService.players,0.8);
+	    	//creatte datapackage for visuals
+	    	//draw visuals
+	    	if (this.currentPlayer) this.services.canvasDrawingService.setPlayerPerspective(this.currentPlayer);
+	    	this.services.canvasDrawingService.clear();
+	    	this.services.canvasDrawingService.drawBackground();
+	    	_pos = new cord(0,0);
+	    	this.services.canvasDrawingService.drawPlanet(_pos,200);
+	    	this.services.canvasDrawingService.drawPlayers(this.services.ioConnectionService.players);
+	    	this.services.canvasDrawingService.drawDarkness(this.services.ioConnectionService.players,0.8);
 	    	//
-	    	this.worldGeneratorService.generateTilesOnPlayer(this.currentPlayer.position);
-	    	this.canvasDrawingService.drawWorld(this.worldGeneratorService.tiles, this.worldGeneratorService.gridSize);
-	    	//console.log('draw '+ this.ioConnectionService.players.length + ' players');
+	    	this.services.worldGeneratorService.generateTilesOnPlayer(this.currentPlayer.position);
+	    	this.services.canvasDrawingService.drawWorld(this.services.worldGeneratorService.tiles, this.services.worldGeneratorService.gridSize);
+	    	//console.log('draw '+ this.services.ioConnectionService.players.length + ' players');
 		}
 
 		
 		if(this.runningOnServer) {
 			//create and send new update package to clients
-			this.ioConnectionService.sentUpdatePackage(io);
+			this.services.ioConnectionService.sentLogicPackage(io);
 		}
 	    
 	    //schedule the next update

@@ -1,5 +1,5 @@
-var cord = require("../prototypes/cord.js");
-var spotLight = require("../prototypes/spotLight.js");
+var cord = require("../classes/cord.js");
+var spotLight = require("../classes/spotLight.js");
 
 var player = function(id, direction, movement, position){
 	this.id = id;

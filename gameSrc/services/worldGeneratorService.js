@@ -3,8 +3,8 @@ var tile = function(position){
 	this.planets = [];
 	this.id = String(Math.round(position.x))+String(Math.round(position.y));
 }
-var cord = require("../prototypes/cord.js");
-var worldGenerator = function(){
+
+var worldGenerator = function(cord){
 	this.tiles = [];
 	this.gridSize = {
 		x:1000,
