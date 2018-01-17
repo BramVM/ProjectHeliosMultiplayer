@@ -665,38 +665,34 @@ textarea::-ms-input-placeholder
 .features:nth-child(even){
     background-color: #f9f9f9;
 }
-.lookingImage{
-    position: relative;
-    width: 55%;
-    margin: 0 auto;
-    background-color: #3299bb;
-    border-radius: 100%;
-    background-image: url("../images/looking.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center,center;
-    border: 5px solid #424242;
-}
-.lookingImage:before{
-    content: "";
-    display: block;
-    padding-top: 100%;  /* initial ratio of 1:1*/
-}
-.aboutIcon{
+
+.sectionImage{
     position: relative;
     width: 50%;
     margin: 0 auto;
-    background-color: #3299bb;
+    background-color: #eee;
+    border-color: #424242;
+    border-style: solid;
+    border-width: 5px;
     border-radius: 100%;
     background-image: url("../images/flag.png");
     background-size: 65%;
     background-repeat: no-repeat;
     background-position: center,center;
 }
-.aboutIcon:before{
+.sectionImage:before{
     content: "";
     display: block;
     padding-top: 100%;  /* initial ratio of 1:1*/
+}
+.iLamp{
+    background-image: url("../images/lamp.png");
+}
+.iRocket{
+    background-image: url("../images/rocket.png");
+}
+.iTrophy{
+    background-image: url("../images/trophy.png");
 }
 .single_features_left img{
     height:460px;
