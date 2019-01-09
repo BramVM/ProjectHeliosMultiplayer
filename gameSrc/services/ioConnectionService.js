@@ -27,7 +27,7 @@ connectionBroadcast = function(player,logicPackage){
 			//update game vars 
 			this.players = [];
 			for (var i = this.bufferedlogicPackage.players.length - 1; i >= 0; i--) {
-				var _player = new this.classes.player(this.bufferedlogicPackage.players[i].id, this.bufferedlogicPackage.players[i].direction, this.bufferedlogicPackage.players[i].movement, this.bufferedlogicPackage.players[i].position)
+				var _player = new this.classes.player(this.bufferedlogicPackage.players[i].id, this.bufferedlogicPackage.players[i].direction, this.bufferedlogicPackage.players[i].movement, this.bufferedlogicPackage.players[i].position, this.bufferedlogicPackage.players[i].poweringUp)
 				this.players.push(_player);
 			}
 		}
@@ -40,7 +40,7 @@ connectionBroadcast = function(player,logicPackage){
 		//add connection event
 		io.on('connection', function(socket){
 			var _position = {x:0,y:0};
-			var _player = new self.classes.player(socket.id, 0, false, _position)
+			var _player = new self.classes.player(socket.id, 0, false, _position, -100)
 			//add this player to the in buffer
 			//self.playersToAdd.push(_player);
 		 	console.log('a user connected ' + socket.id);

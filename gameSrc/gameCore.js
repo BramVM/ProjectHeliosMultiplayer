@@ -85,22 +85,47 @@ var gameCore = function(isServer,io){
 
 		//game logic goes here
 		for (var i = this.services.ioConnectionService.players.length - 1; i >= 0; i--) {
-			var _angle = this.services.ioConnectionService.players[i].direction*Math.PI/4-Math.PI/2
-			if(this.services.ioConnectionService.players[i].movement) this.services.ioConnectionService.players[i].position.moveByDistanceAndAngle(75*this.dt,_angle);
+			var player = this.services.ioConnectionService.players[i];
+			var _angle = player.direction*Math.PI/4-Math.PI/2
+
+			if(player.poweringUp>100) {
+				if(player.movement){
+					player.speed = player.speed + player.acceleration
+					if (player.speed>player.topSpeed){
+						player.speed=player.topSpeed
+					}
+				}
+				else{
+					player.speed = player.speed - player.acceleration
+					if (player.speed<0){
+						player.speed=0
+					}
+				}
+			}
+			player.position.moveByDistanceAndAngle(player.speed*this.dt,_angle);
+			if(player.poweringUp<100) {
+				player.poweringUp = player.poweringUp+3;
+			};
 		}
 		//allow mods so adjust gameState package
 		this.services.modService.updateLogicPackage();
 	    //draw visuals
 	    if(this.runningOnClient && this.currentPlayer){
-	    	//creatte datapackage for visuals
+	    	//create datapackage for visuals
 	    	//draw visuals
 	    	if (this.currentPlayer) this.services.canvasDrawingService.setPlayerPerspective(this.currentPlayer);
 	    	this.services.canvasDrawingService.clear();
-	    	this.services.canvasDrawingService.drawBackground();
-	    	_pos = new cord(0,0);
-	    	this.services.canvasDrawingService.drawPlanet(_pos,200);
-	    	this.services.canvasDrawingService.drawPlayers(this.services.ioConnectionService.players);
-	    	this.services.canvasDrawingService.drawDarkness(this.services.ioConnectionService.players,0.8);
+				this.services.canvasDrawingService.drawBackground();
+				_pos = new cord(200,200);
+				this.services.canvasDrawingService.drawStar(_pos,20);
+				_pos = new cord(-2000,1000);
+				this.services.canvasDrawingService.drawRainbow(_pos,5000);
+				_pos = new cord(1000,-2000);
+				this.services.canvasDrawingService.drawRings(_pos,5000);
+				_pos = new cord(0,0);
+				this.services.canvasDrawingService.drawPlanet(_pos,200);
+				this.services.canvasDrawingService.drawDarkness(this.services.ioConnectionService.players,0.7);
+				this.services.canvasDrawingService.drawPlayers(this.services.ioConnectionService.players);
 	    	//
 	    	this.services.worldGeneratorService.generateTilesOnPlayer(this.currentPlayer.position);
 	    	this.services.canvasDrawingService.drawWorld(this.services.worldGeneratorService.tiles, this.services.worldGeneratorService.gridSize);
