@@ -116,15 +116,14 @@ var gameCore = function(isServer,io){
 	    	if (this.currentPlayer) this.services.canvasDrawingService.setPlayerPerspective(this.currentPlayer);
 	    	this.services.canvasDrawingService.clear();
 				this.services.canvasDrawingService.drawBackground();
-				_pos = new cord(200,200);
-				this.services.canvasDrawingService.drawStar(_pos,20);
+				
 				_pos = new cord(-2000,1000);
 				this.services.canvasDrawingService.drawRainbow(_pos,5000);
 				_pos = new cord(1000,-2000);
 				this.services.canvasDrawingService.drawRings(_pos,5000);
-				_pos = new cord(0,0);
-				this.services.canvasDrawingService.drawPlanet(_pos,200);
-				this.services.canvasDrawingService.drawDarkness(this.services.ioConnectionService.players,0.7);
+				// _pos = new cord(0,0);
+				// this.services.canvasDrawingService.drawPlanet(_pos,200);
+				this.services.canvasDrawingService.drawDarkness(this.services.ioConnectionService.players,0);
 				this.services.canvasDrawingService.drawPlayers(this.services.ioConnectionService.players);
 	    	//
 	    	this.services.worldGeneratorService.generateTilesOnPlayer(this.currentPlayer.position);

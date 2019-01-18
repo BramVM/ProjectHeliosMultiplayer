@@ -5,6 +5,7 @@ var canvasInterface = function (cord) {
 		cord : cord
 	}
 	var self = this;
+	this.tileBase = [];
 	this.layer1 = {};
 	this.layer1.context = {};
 	this.layer2 = {};
@@ -166,19 +167,15 @@ var canvasInterface = function (cord) {
 		// Fill with gradient
 		
 	}
-	this.drawStar = function(position,size){
-		self.layer1.context.save() 
-		//draw rings
-		_ring = self.layer1.context.createRadialGradient(position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y,0,position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y,size/2);
-		_ring.addColorStop(0,"rgba(255, 255, 255, 1)");
-		// _ring.addColorStop(0.60,"transparent");
-		// _ring.addColorStop(0.80,"rgba(255, 255, 255, 1)");
-		_ring.addColorStop(1,"transparent");
-		self.layer1.context.beginPath();
-		self.layer1.context.arc(position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y, size/2, 0, 2 * Math.PI, false);
-		self.layer1.context.fillStyle = _ring;
-     	self.layer1.context.fill();
-		self.layer1.context.closePath();
+	this.drawStar = function(context,position,size){
+		_star = context.createRadialGradient(position.x, position.y, 0, position.x, position.y, size/2);
+		_star.addColorStop(0,"rgba(255, 255, 255, 1)");
+		_star.addColorStop(1,"transparent");
+		context.beginPath();
+		context.arc(position.x, position.y,  size/2, 0, 2 * Math.PI, false);
+		context.fillStyle = _star;
+     	context.fill();
+		context.closePath();
 	}
 	this.drawRainbow = function(position,size){
 		self.layer1.context.save() 
@@ -226,53 +223,53 @@ var canvasInterface = function (cord) {
 		self.layer1.context.closePath();
 		self.layer1.context.restore();
 	}
-	this.drawPlanet = function(position,size){
-		self.layer1.context.save();
-		self.layer1.context.translate(position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y);
-		self.layer1.context.rotate(60*Math.PI/180);
+	this.drawPlanet = function(context,position,size, modX, modY){
+		context.save();
+		context.translate(modX, modY);
+		context.rotate(60*Math.PI/180);
 		//draw rings
-		_ring = self.layer1.context.createRadialGradient( 0, 0, size/2, 0, 0, size/1.5);
+		_ring = context.createRadialGradient( 0, 0, size/2, 0, 0, size/1.5);
 		_ring.addColorStop(0.20,"transparent");
 		_ring.addColorStop(0.40,"rgba(242, 0, 255, 0.2)");
 		_ring.addColorStop(0.60,"transparent");
 		_ring.addColorStop(0.80,"rgba(242, 0, 255, 0.2)");
 		_ring.addColorStop(1,"transparent");
-		self.layer1.context.beginPath();
-		self.layer1.context.arc(0, 0, size, 0, 2 * Math.PI, false);
-		self.layer1.context.fillStyle = _ring;
-     	self.layer1.context.fill();
-		self.layer1.context.closePath();
+		context.beginPath();
+		context.arc(0, 0, size, 0, 2 * Math.PI, false);
+		context.fillStyle = _ring;
+     	context.fill();
+		context.closePath();
 		//draw rings
-		_atmosphere = self.layer1.context.createRadialGradient(0, 0,size/2,0, 0,size);
+		_atmosphere = context.createRadialGradient(0, 0,size/2,0, 0,size);
 		_atmosphere.addColorStop(0,"rgba(242, 0, 255, 0.4)");
 		_atmosphere.addColorStop(1,"transparent");
-		self.layer1.context.beginPath();
-		self.layer1.context.arc(0, 0, size, 0, 2 * Math.PI, false);
-		self.layer1.context.fillStyle = _atmosphere;
-     	self.layer1.context.fill();
-		self.layer1.context.closePath();
+		context.beginPath();
+		context.arc(0, 0, size, 0, 2 * Math.PI, false);
+		context.fillStyle = _atmosphere;
+     	context.fill();
+		context.closePath();
 		//draw base
-		self.layer1.context.beginPath();
-		self.layer1.context.arc(0, 0, size/2, 0, 2 * Math.PI, false);
-		self.layer1.context.fillStyle = '#f200ff';
-     	self.layer1.context.fill();
+		context.beginPath();
+		context.arc(0, 0, size/2, 0, 2 * Math.PI, false);
+		context.fillStyle = '#f200ff';
+     	context.fill();
      	
-		self.layer1.context.closePath();
-		self.layer1.context.clip();
+		context.closePath();
+		context.clip();
 		//draw ornaments
-		self.layer1.context.beginPath();
-		self.layer1.context.arc(size, size, size*1.57, 0, 2 * Math.PI, false);
-		self.layer1.context.strokeStyle = "rgba(0, 0, 0, 0.4)"
-		self.layer1.context.lineWidth = size/3.8;
-     	self.layer1.context.stroke();
-		self.layer1.context.closePath();
+		context.beginPath();
+		context.arc(size, size, size*1.57, 0, 2 * Math.PI, false);
+		context.strokeStyle = "rgba(0, 0, 0, 0.4)"
+		context.lineWidth = size/3.8;
+     	context.stroke();
+		context.closePath();
 
-		self.layer1.context.beginPath();
-		self.layer1.context.arc(size, size, size*1.15, 0, 2 * Math.PI, false);
-		self.layer1.context.strokeStyle = "rgba(0, 0, 0, 0.4)"
-		self.layer1.context.lineWidth = size/5;
-     	self.layer1.context.stroke();
-		self.layer1.context.closePath();
+		context.beginPath();
+		context.arc(size, size, size*1.15, 0, 2 * Math.PI, false);
+		context.strokeStyle = "rgba(0, 0, 0, 0.4)"
+		context.lineWidth = size/5;
+     	context.stroke();
+		context.closePath();
 
 		// var numberOfOrnaments = 50;
 		// var minSize = size/8;
@@ -394,40 +391,7 @@ var canvasInterface = function (cord) {
 	}
 	this.drawDarkness = function(players, darkness){
 		//draw visual effect for lights
-		for (var i = players.length - 1; i >= 0; i--) {
-			if(players[i].headlight.state){
-				self.layer1.context.beginPath();
-				self.layer1.context.moveTo(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y);
-				self.layer1.context.arc(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y, players[i].headlight.range, players[i].direction*Math.PI/4-Math.PI/2-players[i].headlight.angle/2, players[i].direction*Math.PI/4-Math.PI/2+players[i].headlight.angle/2);
-				self.layer1.context.moveTo(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y);
-				self.layer1.context.closePath();
-				_spotLightGradient=self.layer1.context.createRadialGradient(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y,0,players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y,players[i].headlight.range);
-				var accelerator = 0
-				if(players[i].poweringUp>0) accelerator=Math.sin(players[i].poweringUp/100*Math.PI/2);
-				var power = (1+Math.sin(accelerator*Math.PI*5-0.5*Math.PI))/2
-				if(players[i].poweringUp<100&&power*Math.random()<0.5) power = 0;
-				_spotLightGradient.addColorStop(0,"rgba(255, 232, 85, " + 0.15*players[i].headlight.intensity*power +")");
-				_spotLightGradient.addColorStop(1,"transparent");
-				self.layer1.context.fillStyle=_spotLightGradient;
-				self.layer1.context.fill();
-				numberOfRays = 3;
-				if(numberOfRays>1){
-					angleOffset = 0;
-					angleOfRay = players[i].headlight.angle / (numberOfRays*2-1);
-					for (var j = numberOfRays - 1; j >= 0; j--) {
-						angleOffset = j * players[i].headlight.angle / (numberOfRays*2-1) * 2;
-						self.layer1.context.beginPath();
-						self.layer1.context.moveTo(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y);
-						self.layer1.context.arc(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y, players[i].headlight.range, players[i].direction*Math.PI/4-Math.PI/2-players[i].headlight.angle/2 + angleOffset, players[i].direction*Math.PI/4-Math.PI/2-players[i].headlight.angle/2 + angleOffset + angleOfRay);
-						self.layer1.context.moveTo(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y);
-						self.layer1.context.closePath();
-						self.layer1.context.fillStyle=_spotLightGradient;
-						self.layer1.context.fill();
-					}
-				}
-			}
-			
-		}
+		
 		//var fullCanvasPath = new Path2D();
 		//radial darkness
 		var _radialLightGradient=self.layer1.context.createRadialGradient(self.layer1.context.canvas.width/2,self.layer1.context.canvas.height/2,0,self.layer1.context.canvas.width/2,self.layer1.context.canvas.height/2,1000);
@@ -446,20 +410,35 @@ var canvasInterface = function (cord) {
 		self.layer2.context.globalCompositeOperation= "destination-out";
 		for (var i = players.length - 1; i >= 0; i--) {
 			if(players[i].headlight.state){
-				var accelerator = 0
-				if(players[i].poweringUp>0) accelerator=Math.sin(players[i].poweringUp/100*Math.PI/2);
-				var power = (1+Math.sin(accelerator*Math.PI*5-0.5*Math.PI))/2
-				if(players[i].poweringUp<100&&power*Math.random()<0.5) power = 0;
 				self.layer2.context.beginPath();
 				self.layer2.context.moveTo(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y);
 				self.layer2.context.arc(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y, players[i].headlight.range, players[i].direction*Math.PI/4-Math.PI/2-players[i].headlight.angle/2, players[i].direction*Math.PI/4-Math.PI/2+players[i].headlight.angle/2);
 				self.layer2.context.moveTo(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y);
 				self.layer2.context.closePath();
-				_spotLightGradient=self.layer1.context.createRadialGradient(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y,0,players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y,players[i].headlight.range);
+				_spotLightGradient=self.layer2.context.createRadialGradient(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y,0,players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y,players[i].headlight.range);
+				var accelerator = 0
+				if(players[i].poweringUp>0) accelerator=Math.sin(players[i].poweringUp/100*Math.PI/2);
+				var power = (1+Math.sin(accelerator*Math.PI*5-0.5*Math.PI))/2
+				if(players[i].poweringUp<100&&power*Math.random()<0.5) power = 0;
 				_spotLightGradient.addColorStop(0,"rgba(0, 0, 0, " + 1*players[i].headlight.intensity*power +")");
 				_spotLightGradient.addColorStop(1,"transparent");
 				self.layer2.context.fillStyle=_spotLightGradient;
 				self.layer2.context.fill();
+				numberOfRays = 3;
+				if(numberOfRays>1){
+					angleOffset = 0;
+					angleOfRay = players[i].headlight.angle / (numberOfRays*2-1);
+					for (var j = numberOfRays - 1; j >= 0; j--) {
+						angleOffset = j * players[i].headlight.angle / (numberOfRays*2-1) * 2;
+						self.layer2.context.beginPath();
+						self.layer2.context.moveTo(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y);
+						self.layer2.context.arc(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y, players[i].headlight.range, players[i].direction*Math.PI/4-Math.PI/2-players[i].headlight.angle/2 + angleOffset, players[i].direction*Math.PI/4-Math.PI/2-players[i].headlight.angle/2 + angleOffset + angleOfRay);
+						self.layer2.context.moveTo(players[i].position.x + self.perspectiveOffset.x, players[i].position.y + self.perspectiveOffset.y);
+						self.layer2.context.closePath();
+						self.layer2.context.fillStyle=_spotLightGradient;
+						self.layer2.context.fill();
+					}
+				}
 			}
 			
 		}
@@ -472,7 +451,69 @@ var canvasInterface = function (cord) {
 			self.layer1.context.closePath();
 			//self.layer1.context.rect(20,20,150,100);
 			self.layer1.context.stroke();
+
+			tileRelativePos = new cord(tiles[i].position.x + self.perspectiveOffset.x , tiles[i].position.y + self.perspectiveOffset.y);
+			// get tile as imageURL from local storage
+			var tileImageUrl = undefined;
+			self.tileBase.forEach(tile => {
+				if (tile.id === 'tile_' + tiles[i].id) tileImageUrl=tiles[i].url;
+			});
+			// var tileImageUrl = localStorage.getItem("tile_" + tiles[i].id);
+			
+			// generate imageURL and add to local storage
+			if(!tileImageUrl){
+				var tile = document.createElement('canvas')
+				tile.height = gridSize.y;
+				tile.width = gridSize.x;
+				var tileContext = tile.getContext('2d');
+				this.drawTile(tileContext,tileRelativePos.x,tileRelativePos.y,gridSize.x,gridSize.y);
+				tileImageUrl= tile.toDataURL();
+				// localStorage.setItem("tile_" + tiles[i].id, tileImageUrl);
+				self.tileBase.push(
+					{
+						id: 'tile_' + tiles[i].id,
+						url: tileImageUrl
+					}
+				)
+			}
+			var tileImage = new Image();
+			tileImage.src = tileImageUrl;
+			self.layer1.context.drawImage(tileImage,tileRelativePos.x,tileRelativePos.y)
+
 		}
+	}
+	this.drawTile = function(context,x,y,width,height){
+		// STARS
+		var densety = 10;
+		var minSize = 5;
+		var maxSize = 20;
+		stepSizeY = height/densety
+		stepSizeX = width/densety
+		_pos = new cord(0,0);
+		while (_pos.x < width) {
+			_pos.y = 0;
+			while (_pos.y < height) {
+				Math.seedrandom("starx"+_pos.x+_pos.y);
+				var xMod = Math.random();
+				Math.seedrandom("stary"+_pos.x+_pos.y);
+				var yMod = Math.random();
+				Math.seedrandom("starsize"+_pos.x+_pos.y);
+				var sizeMod = Math.random();
+				var size = minSize + (maxSize-minSize)*sizeMod;
+				starPos = new cord(_pos.x+size/2+(stepSizeX-size)*xMod, _pos.y+size/2+(stepSizeY-size)*yMod);
+				this.drawStar(context,starPos,size);
+				_pos.y = _pos.y + stepSizeY;
+			}
+			_pos.x = _pos.x + stepSizeX;
+		}
+		// PLANET
+		var planetPosition = new cord(x,y);
+		var planetSize = 200;
+		Math.seedrandom("planetx"+x+y);
+		var modX = planetSize/2 + Math.random()*(width-planetSize);
+		Math.seedrandom("planety"+x+y);
+		var modY = planetSize/2 + Math.random()*(height-planetSize);
+		this.drawPlanet(context,planetPosition,planetSize, modX, modY);
 	}
 }
 			
