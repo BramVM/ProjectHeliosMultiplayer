@@ -8,7 +8,7 @@ var player = function(id, direction, movement, position, poweringUp){
 	this.movement = movement;
 	this.acceleration = 2;
 	this.speed = 0;
-	this.topSpeed = 60;
+	this.topSpeed = 150;
 	this.position = new cord (position.x,position.y);
 	/*this.light ={
 		state: true,

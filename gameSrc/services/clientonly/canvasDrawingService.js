@@ -154,7 +154,6 @@ var canvasInterface = function (cord) {
 		}
 	}
 	this.drawBackground = function(){
-		
 		self.layer1.context.beginPath();
   		self.layer1.context.moveTo(0, 0);
   		self.layer1.context.lineTo(self.layer1.context.canvas.width, 0);
@@ -180,14 +179,14 @@ var canvasInterface = function (cord) {
 	this.drawRainbow = function(position,size){
 		self.layer1.context.save() 
 		//draw rings
-		_ring = self.layer1.context.createRadialGradient(position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y,0,position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y,size/2);
+		_ring = self.layer1.context.createRadialGradient(position.x, position.y,0,position.x, position.y,size/2);
 		_ring.addColorStop(0.98,"transparent");
 		_ring.addColorStop(0.985,"rgba(0, 0, 255, 0.03)");
 		_ring.addColorStop(0.99,"rgba(0, 255, 0, 0.03)");
 		_ring.addColorStop(0.995,"rgba(255, 0, 0, 0.03)");
 		_ring.addColorStop(1,"transparent");
 		self.layer1.context.beginPath();
-		self.layer1.context.arc(position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y, size/2, 0, 2 * Math.PI, false);
+		self.layer1.context.arc(position.x , position.y , size/2, 0, 2 * Math.PI, false);
 		self.layer1.context.fillStyle = _ring;
      	self.layer1.context.fill();
 		self.layer1.context.closePath();
@@ -226,139 +225,165 @@ var canvasInterface = function (cord) {
 	this.drawPlanet = function(context,position,size, modX, modY){
 		context.save();
 		context.translate(modX, modY);
-		context.rotate(60*Math.PI/180);
-		//draw rings
+		Math.seedrandom("rot"+_pos.x+modX+_pos.y+modY);
+		context.rotate(Math.PI*2*Math.random());
 		_ring = context.createRadialGradient( 0, 0, size/2, 0, 0, size/1.5);
-		_ring.addColorStop(0.20,"transparent");
-		_ring.addColorStop(0.40,"rgba(242, 0, 255, 0.2)");
-		_ring.addColorStop(0.60,"transparent");
-		_ring.addColorStop(0.80,"rgba(242, 0, 255, 0.2)");
-		_ring.addColorStop(1,"transparent");
-		context.beginPath();
-		context.arc(0, 0, size, 0, 2 * Math.PI, false);
-		context.fillStyle = _ring;
-     	context.fill();
-		context.closePath();
-		//draw rings
-		_atmosphere = context.createRadialGradient(0, 0,size/2,0, 0,size);
-		_atmosphere.addColorStop(0,"rgba(242, 0, 255, 0.4)");
-		_atmosphere.addColorStop(1,"transparent");
-		context.beginPath();
-		context.arc(0, 0, size, 0, 2 * Math.PI, false);
-		context.fillStyle = _atmosphere;
-     	context.fill();
-		context.closePath();
+		Math.seedrandom("r"+_pos.x+modX+_pos.y+modY);
+		var r = 100+Math.random()*155;
+		Math.seedrandom("g"+_pos.x+modX+_pos.y+modY);
+		var g = 100+Math.random()*155;
+		Math.seedrandom("b"+_pos.x+modX+_pos.y+modY);
+		var b = 100+Math.random()*155;
+
+		//draw atmosphere
+		Math.seedrandom("atmosphere"+_pos.x+modX+_pos.y+modY)
+		if(Math.random()<0.5){
+			_ring.addColorStop(0.20,"transparent");
+			_ring.addColorStop(0.40,"rgba("+r+","+g+", "+b+", 0.2)");
+			_ring.addColorStop(0.60,"transparent");
+			_ring.addColorStop(0.80,"rgba("+r+","+g+", "+b+", 0.2)");
+			_ring.addColorStop(1,"transparent");
+			context.beginPath();
+			context.arc(0, 0, size, 0, 2 * Math.PI, false);
+			context.fillStyle = _ring;
+				context.fill();
+			context.closePath();
+			_atmosphere = context.createRadialGradient(0, 0,size/2,0, 0,size);
+			_atmosphere.addColorStop(0,"rgba("+r+","+g+", "+b+", 0.4)");
+			_atmosphere.addColorStop(1,"transparent");
+			context.beginPath();
+			context.arc(0, 0, size, 0, 2 * Math.PI, false);
+			context.fillStyle = _atmosphere;
+				context.fill();
+			context.closePath();
+		}
+		else{
+			_atmosphere = context.createRadialGradient(0, 0,size/2,0, 0,size/1.5);
+			_atmosphere.addColorStop(0,"rgba("+r+","+g+", "+b+", 0.4)");
+			_atmosphere.addColorStop(1,"transparent");
+			context.beginPath();
+			context.arc(0, 0, size/1.5, 0, 2 * Math.PI, false);
+			context.fillStyle = _atmosphere;
+				context.fill();
+			context.closePath();
+		}
 		//draw base
 		context.beginPath();
 		context.arc(0, 0, size/2, 0, 2 * Math.PI, false);
-		context.fillStyle = '#f200ff';
-     	context.fill();
+		context.fillStyle = "rgb("+r+","+g+", "+b+")";
+    context.fill();
      	
 		context.closePath();
 		context.clip();
 		//draw ornaments
-		context.beginPath();
-		context.arc(size, size, size*1.57, 0, 2 * Math.PI, false);
-		context.strokeStyle = "rgba(0, 0, 0, 0.4)"
-		context.lineWidth = size/3.8;
-     	context.stroke();
-		context.closePath();
+		Math.seedrandom("texture"+_pos.x+modX+_pos.y+modY)
+		if(Math.random()<0.5){
+			context.beginPath();
+			context.arc(size, size, size*1.57, 0, 2 * Math.PI, false);
+			context.strokeStyle = "rgba(0, 0, 0, 0.4)"
+			context.lineWidth = size/3.8;
+				context.stroke();
+			context.closePath();
 
-		context.beginPath();
-		context.arc(size, size, size*1.15, 0, 2 * Math.PI, false);
-		context.strokeStyle = "rgba(0, 0, 0, 0.4)"
-		context.lineWidth = size/5;
-     	context.stroke();
-		context.closePath();
-
-		// var numberOfOrnaments = 50;
-		// var minSize = size/8;
-		// var maxSize = size/5;
-		// var ornaments = [];
-		// for (var i = 0; i < numberOfOrnaments; i++) {
-		// 	Math.seedrandom("ornaments"+position.x+position.y+i);
-		// 	ornaments.push({
-		// 		size : minSize+Math.random()*(maxSize-minSize),
-		// 		position : new this.classes.cord(0,0)
-		// 	})
-		// 	ornaments[ornaments.length-1].position.x = position.x-size/2+Math.random()*size;
-		// 	ornaments[ornaments.length-1].position.y = position.y-size/2+Math.random()*size;		
-		// 	Math.seedrandom();
-		// 	//check if not colliding
-		// 	if(ornaments.length==1){
-		// 		this.drawRandomShape(ornaments[ornaments.length-1].position, ornaments[ornaments.length-1].size)
-		// 	}
-		// 	else{
-		// 		var maydraw = true;
-		// 		for (var j = 0; j < ornaments.length-1; j++) {
-		// 			if (ornaments[ornaments.length-1].size+ornaments[j].size > Math.abs(ornaments[ornaments.length-1].position.distanceToPoint(ornaments[j].position))){
-		// 				maydraw = false;
-		// 			}
-		// 		}
-		// 		if(maydraw){
-		// 			this.drawRandomShape(ornaments[ornaments.length-1].position, ornaments[ornaments.length-1].size)
-		// 		}
-		// 		else{
-		// 				ornaments.splice(ornaments.length-1,1);
-						
-		// 		}
+			context.beginPath();
+			context.arc(size, size, size*1.15, 0, 2 * Math.PI, false);
+			context.strokeStyle = "rgba(0, 0, 0, 0.4)"
+			context.lineWidth = size/5;
+				context.stroke();
+			context.closePath();
+		}
+		else{
+			var numberOfOrnaments = 100;
+			var minSize = size/8;
+			var maxSize = size/3;
+			var ornaments = [];
+			// this.drawRandomShape(context,new this.classes.cord(0,0), size/5)
+			for (var i = 0; i < numberOfOrnaments; i++) {
+				Math.seedrandom("ornaments"+position.x+modX+position.y+modY+i);
+				ornaments.push({
+					size : minSize+Math.random()*(maxSize-minSize),
+					position : new this.classes.cord(0,0)
+				})
+				ornaments[ornaments.length-1].position.x = -size/2+Math.random()*size;
+				ornaments[ornaments.length-1].position.y = -size/2+Math.random()*size;		
+				Math.seedrandom();
+				//check if not colliding
+				if(ornaments.length==1){
+					this.drawRandomShape(context, ornaments[ornaments.length-1].position, ornaments[ornaments.length-1].size)
+				}
+				else{
+					var maydraw = true;
+					for (var j = 0; j < ornaments.length-1; j++) {
+						if (ornaments[ornaments.length-1].size+ornaments[j].size > Math.abs(ornaments[ornaments.length-1].position.distanceToPoint(ornaments[j].position))){
+							maydraw = false;
+						}
+					}
+					if(maydraw){
+						this.drawRandomShape(context, ornaments[ornaments.length-1].position, ornaments[ornaments.length-1].size)
+					}
+					else{
+							ornaments.splice(ornaments.length-1,1);
+							
+					}
+					
+				}	
 				
-		// 	}	
-			
-		// }
-		self.layer1.context.restore();
+			}
+		}
 		//draw shadows
-		_outlineShadow = self.layer1.context.createRadialGradient(position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y,size/4,position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y,size/4*3);
+		_outlineShadow = context.createRadialGradient(0,0,size/4,0,0,size/4*3);
 		_outlineShadow.addColorStop(0,"transparent");
 		_outlineShadow.addColorStop(1,"rgba(0, 0, 0, 1)");
-		self.layer1.context.beginPath();
-		self.layer1.context.arc(position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y, size/2, 0, 2 * Math.PI, false);
-		self.layer1.context.fillStyle = _outlineShadow;
-     	self.layer1.context.fill();
-		self.layer1.context.closePath();
-		_ambientShadow = self.layer1.context.createRadialGradient(position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y,0,position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y,size/1.5);
+		context.beginPath();
+		context.arc(0,0, size/2, 0, 2 * Math.PI, false);
+		context.fillStyle = _outlineShadow;
+     	context.fill();
+		context.closePath();
+		_ambientShadow = context.createRadialGradient(0,0,0,0,0,size/1.5);
 		_ambientShadow.addColorStop(0,"transparent");
 		_ambientShadow.addColorStop(1,"rgba(0, 0, 0, 0.5)");
-		self.layer1.context.beginPath();
-		self.layer1.context.arc(position.x + self.perspectiveOffset.x, position.y + self.perspectiveOffset.y, size/2, 0, 2 * Math.PI, false);
-		self.layer1.context.fillStyle = _ambientShadow;
-     	self.layer1.context.fill();
-		self.layer1.context.closePath();
+		context.beginPath();
+		context.arc(0,0, size/2, 0, 2 * Math.PI, false);
+		context.fillStyle = _ambientShadow;
+     	context.fill();
+		context.closePath();
+
+		context.restore();
 	}
-	this.drawRandomShape = function(position, size){
+	this.drawRandomShape = function(context,position, size){
 		//var position = new this.classes.cord(player.position.x,player.position.y);
-		/*self.layer1.context.beginPath();
-		      self.layer1.context.arc(position.x, position.y, 2, 0, 2 * Math.PI, false);
-		      self.layer1.context.fillStyle = 'red';
-		      self.layer1.context.fill();
-		      self.layer1.context.closePath();*/
+		/*context.beginPath();
+		      context.arc(position.x, position.y, 2, 0, 2 * Math.PI, false);
+		      context.fillStyle = 'red';
+		      context.fill();
+		      context.closePath();*/
 		var minDistance = size/5;
 		var numberOfPoints = 6
-		self.layer1.context.beginPath();
+		context.beginPath();
 		Math.seedrandom(""+String(position.x) + String(position.y));
 		for (var i = 0; i < numberOfPoints; i++) {
 			if(i!=0){
 				bezierpoint1 = new this.classes.cord(prevPoint.x, prevPoint.y);
 				bezierpoint1.moveByDistanceAndAngle(prevOffset/2,prevAngle+Math.PI/2);
-				/*self.layer1.context.beginPath();
-		      self.layer1.context.arc(bezierpoint1.x, bezierpoint1.y, 2, 0, 2 * Math.PI, false);
-		      self.layer1.context.fillStyle = 'green';
-		      self.layer1.context.fill();
-		      self.layer1.context.closePath();*/
+				/*context.beginPath();
+		      context.arc(bezierpoint1.x, bezierpoint1.y, 2, 0, 2 * Math.PI, false);
+		      context.fillStyle = 'green';
+		      context.fill();
+		      context.closePath();*/
 			}
 			 
 			calculatedPosition = new this.classes.cord(position.x, position.y);
 			prevAngle = Math.PI*2/numberOfPoints*i;
 			prevOffset = minDistance + Math.random()*(size-minDistance);
 			calculatedPosition.moveByDistanceAndAngle(prevOffset,Math.PI*2/numberOfPoints*i);
-			/*self.layer1.context.beginPath();
-		      self.layer1.context.arc(calculatedPosition.x, calculatedPosition.y, 2, 0, 2 * Math.PI, false);
-		      self.layer1.context.fillStyle = 'blue';
-		      self.layer1.context.fill();
-		      self.layer1.context.closePath();*/
+			/*context.beginPath();
+		      context.arc(calculatedPosition.x, calculatedPosition.y, 2, 0, 2 * Math.PI, false);
+		      context.fillStyle = 'blue';
+		      context.fill();
+		      context.closePath();*/
 			Math.seedrandom(""+String(calculatedPosition.x) + String(calculatedPosition.y));
 			if(i===0){
-				self.layer1.context.moveTo(calculatedPosition.x+self.perspectiveOffset.x, calculatedPosition.y+self.perspectiveOffset.y);
+				context.moveTo(calculatedPosition.x, calculatedPosition.y);
 				firstpoint = calculatedPosition;
 				firstAngle= prevAngle;
 				firstOffset= prevOffset;
@@ -366,13 +391,13 @@ var canvasInterface = function (cord) {
 			else{
 				bezierpoint2 = new this.classes.cord(calculatedPosition.x, calculatedPosition.y);
 				bezierpoint2.moveByDistanceAndAngle(prevOffset/2,prevAngle-Math.PI/2);
-				 /*self.layer1.context.beginPath();
-		      self.layer1.context.arc(bezierpoint2.x, bezierpoint2.y, 2, 0, 2 * Math.PI, false);
-		      self.layer1.context.fillStyle = '#ffffff';
-		      self.layer1.context.fill();
-		      self.layer1.context.closePath();*/
-				self.layer1.context.bezierCurveTo(bezierpoint1.x+self.perspectiveOffset.x, bezierpoint1.y+self.perspectiveOffset.y, bezierpoint2.x+self.perspectiveOffset.x, bezierpoint2.y+self.perspectiveOffset.y, calculatedPosition.x+self.perspectiveOffset.x, calculatedPosition.y+self.perspectiveOffset.y);
-				//self.layer1.context.lineTo(calculatedPosition.x, calculatedPosition.y);
+				 /*context.beginPath();
+		      context.arc(bezierpoint2.x, bezierpoint2.y, 2, 0, 2 * Math.PI, false);
+		      context.fillStyle = '#ffffff';
+		      context.fill();
+		      context.closePath();*/
+				context.bezierCurveTo(bezierpoint1.x, bezierpoint1.y, bezierpoint2.x, bezierpoint2.y, calculatedPosition.x, calculatedPosition.y);
+				//context.lineTo(calculatedPosition.x, calculatedPosition.y);
 				
 			}
 			prevPoint = calculatedPosition;
@@ -381,12 +406,12 @@ var canvasInterface = function (cord) {
 		bezierpoint1.moveByDistanceAndAngle(prevOffset/2,prevAngle+Math.PI/2);
 		bezierpoint2 = new this.classes.cord(firstpoint.x, firstpoint.y);
 		bezierpoint2.moveByDistanceAndAngle(firstOffset/2,firstAngle-Math.PI/2);
-		self.layer1.context.bezierCurveTo(bezierpoint1.x+self.perspectiveOffset.x, bezierpoint1.y+self.perspectiveOffset.y, bezierpoint2.x+self.perspectiveOffset.x, bezierpoint2.y+self.perspectiveOffset.y, firstpoint.x+self.perspectiveOffset.x, firstpoint.y+self.perspectiveOffset.y);
-		//self.layer1.context.lineTo(calculatedPosition.x, calculatedPosition.y);
+		context.bezierCurveTo(bezierpoint1.x, bezierpoint1.y, bezierpoint2.x, bezierpoint2.y, firstpoint.x, firstpoint.y);
+		//context.lineTo(calculatedPosition.x, calculatedPosition.y);
 		Math.seedrandom();
-		self.layer1.context.fillStyle = "rgba(0, 0, 0, 0.5)";
-		self.layer1.context.fill();
-		self.layer1.context.closePath();
+		context.fillStyle = "rgba(0, 0, 0, 0.4)";
+		context.fill();
+		context.closePath();
 
 	}
 	this.drawDarkness = function(players, darkness){
@@ -446,17 +471,16 @@ var canvasInterface = function (cord) {
 	}
 	this.drawWorld = function(tiles,gridSize){
 		for (var i = tiles.length - 1; i >= 0; i--) {
-			self.layer1.context.beginPath();
-			self.layer1.context.rect(tiles[i].position.x+ self.perspectiveOffset.x,tiles[i].position.y+ self.perspectiveOffset.y,gridSize.x,gridSize.y);
-			self.layer1.context.closePath();
-			//self.layer1.context.rect(20,20,150,100);
-			self.layer1.context.stroke();
+			// self.layer1.context.beginPath();
+			// self.layer1.context.rect(tiles[i].position.x+ self.perspectiveOffset.x,tiles[i].position.y+ self.perspectiveOffset.y,gridSize.x,gridSize.y);
+			// self.layer1.context.closePath();
+			// self.layer1.context.stroke();
 
 			tileRelativePos = new cord(tiles[i].position.x + self.perspectiveOffset.x , tiles[i].position.y + self.perspectiveOffset.y);
 			// get tile as imageURL from local storage
 			var tileImageUrl = undefined;
-			self.tileBase.forEach(tile => {
-				if (tile.id === 'tile_' + tiles[i].id) tileImageUrl=tiles[i].url;
+			self.tileBase.forEach(function(tile) {
+				if (tile.id === 'tile_' + tiles[i].id) tileImageUrl=tile.url;
 			});
 			// var tileImageUrl = localStorage.getItem("tile_" + tiles[i].id);
 			
@@ -508,12 +532,13 @@ var canvasInterface = function (cord) {
 		}
 		// PLANET
 		var planetPosition = new cord(x,y);
-		var planetSize = 200;
+		Math.seedrandom("size"+x+y);
+		var planetSize = 300+Math.random()*300;
 		Math.seedrandom("planetx"+x+y);
 		var modX = planetSize/2 + Math.random()*(width-planetSize);
 		Math.seedrandom("planety"+x+y);
 		var modY = planetSize/2 + Math.random()*(height-planetSize);
-		this.drawPlanet(context,planetPosition,planetSize, modX, modY);
+		this.drawPlanet(context,planetPosition,planetSize/2, modX, modY);
 	}
 }
 			
