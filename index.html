@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>project Helios</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<script src="/socket.io/socket.io.js"></script>
-		<script src="node_modules/three/three.js"></script>
-		<style type="text/css">
+<!doctype html>
+<html>
+  <head>
+    <title>project Helios</title>
+    <style type="text/css">
 			html, body {
 		      width: 100%;
 		      height: 100%;
@@ -16,7 +12,8 @@
 		      display: block;  /* No floating content on sides */
 		      background-color: #1c0221;
 		    }
-			#layer1,#layer2,#grain{
+      
+			canvas{
 				position: absolute;
 				top:0;
 				left:0;
@@ -41,62 +38,9 @@
 				}
 			}
 		</style>
-	</head>
-	<body>
-		<grain>
-			<canvas id="layer1">
-			</canvas>
-			<canvas id="layer2">
-			</canvas>
-			<canvas id="grain">
-			</canvas>
-			<h1></h1>
-		</grain>
-		<script src="grain.js"></script>
-		<script src="bundle.js"></script>
-		<script>
-			document.addEventListener('DOMContentLoaded',function(event){
-				// array with texts to type in typewriter
-				var dataText = [ " ", " ", " ", " ", "rebooting all systems;", "...", "Welcome back '5e07821d-e822'.", "Unfortunately your memory has been reset.", "The recovery image is missing.","Your model must be trained from scratch.", "For starters, try to move the ship.", " ", " ", " ", " ", " ", "Congratulations.", "Chance for survival has improved by 110%.", "Learn as much as you can.", "Good luck!", " "];
-				
-				// type one text in the typwriter
-				// keeps calling itself until the text is finished
-				function typeWriter(text, i, fnCallback) {
-					// chekc if text isn't finished yet
-					if (i < (text.length)) {
-						// add next character to h1
-					document.querySelector("h1").innerHTML = text.substring(0, i+1) +'<span aria-hidden="true"></span>';
-
-						// wait for a while and call this function again for next character
-						setTimeout(function() {
-							typeWriter(text, i + 1, fnCallback)
-						}, 100);
-					}
-					// text finished, call callback if there is a callback function
-					else if (typeof fnCallback == 'function') {
-						// call callback after timeout
-						setTimeout(fnCallback, 1000);
-					}
-				}
-				// start a typewriter animation for a text in the dataText array
-				function StartTextAnimation(i) {
-					// if (typeof dataText[i] == 'undefined'){
-					// 		setTimeout(function() {
-					// 			StartTextAnimation(0);
-					// 		}, 20000);
-					// }
-					// check if dataText[i] exists
-					if (i <  dataText.length) {
-						// text exists! start typewriter animation
-					typeWriter(dataText[i], 0, function(){
-						// after callback (and whole text has been animated), start next text
-						StartTextAnimation(i + 1);
-					});
-					}
-				}
-				// start the text animation
-				StartTextAnimation(0);
-			});
-		</script>
-	</body>
+  </head>
+  <body>
+		Loading ...
+    <script src="dist/clientScript.js"></script>
+  </body>
 </html>

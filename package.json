@@ -1,26 +1,26 @@
 {
   "name": "project-helios-multiplayer",
   "version": "1.0.0",
-  "description": "Experimental space/survival/crafting/trading game project with procedural generated world for the web browser.",
-  "main": "nodeServer.js",
+  "description": "Experimental exploation/survival/crafting game project with procedural generation for the web browser.",
+  "private": true,
   "scripts": {
-    "start": "node nodeServer.js",
-    "debug": "node debugServer.js",
-    "build": "browserify -g uglifyify core.js | uglifyjs -o bundle.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build && node nodeServer.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack && webpack --config webpack-node.config.js"
   },
+  "keywords": [],
   "author": "Bram Van Mensel",
   "license": "SEE LICENSE IN <license.txt>",
+  "devDependencies": {
+    "clean-webpack-plugin": "^1.0.1",
+    "terser": "^3.14.1",
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1",
+    "webpack-node-externals": "^1.7.2",
+    "worker-loader": "^2.0.0"
+  },
   "dependencies": {
-    "browserify": "^11.2.0",
-    "express": "^4.13.0",
-    "fs": "0.0.2",
-    "socket.io": "^2.0.2",
-    "uglify-js": "^2.5.0",
-    "uglifyify": "^3.0.1",
-    "underscore": "latest",
-    "watchify": "latest",
-    "three": "^0.73.0",
-    "seedrandom": "^2.4.2"
+    "seedrandom": "^2.4.4",
+    "websocket": "^1.0.28"
   }
 }
