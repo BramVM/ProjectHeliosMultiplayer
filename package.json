@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npm run build && node nodeServer.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack && webpack --config webpack-node.config.js"
+    "build": "webpack && webpack --config webpack-node.config.js",
+    "heroku-postbuild": "echo Skip build on Heroku"
   },
   "keywords": [],
   "author": "Bram Van Mensel",
@@ -22,5 +23,6 @@
   "dependencies": {
     "seedrandom": "^2.4.4",
     "websocket": "^1.0.28"
-  }
+  },
+  "heroku-run-build-script": true
 }
