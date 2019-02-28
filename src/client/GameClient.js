@@ -12,7 +12,7 @@ const gameState = new GameState();
 const grid = new Grid();
 
 // generate random id (needs refinement)
-var id = (() => {
+var userId = (() => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
@@ -25,8 +25,8 @@ var GameClient = function () {
   var connection = new WebSocket(HOST);
   connection.onopen = function () {
     console.log('opened websocket');
-    connection.send(JSON.stringify({ action: Actions.CONNECTION, value: true, userId: id }));
-    gameClient.activePlayer = gameState.addPlayer(id);
+    connection.send(JSON.stringify({ action: Actions.CONNECTION, value: true, userId: userId }));
+    gameClient.activePlayer = gameState.addPlayer(userId);
   };
 
   connection.onerror = function (error) {
@@ -40,6 +40,7 @@ var GameClient = function () {
       var json = JSON.parse(message.data);
       if (json.action === Actions.UPDATE_PACKAGE && json.value) {
         json.value.players.forEach(serverPlayer => {
+          if (serverPlayer.id === userId) { gameClient.activePlayer = serverPlayer }
           var player = gameState.players.find(player => player.id === serverPlayer.id);
           if (player) {
             player.force = serverPlayer.force;
