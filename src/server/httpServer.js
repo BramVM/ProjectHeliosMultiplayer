@@ -2,7 +2,7 @@ var http = require('http');
 var fs = require('fs');
 var path = require('path');
 
-var HttpServer = http.createServer(function (request, response) {
+var httpServer = http.createServer(function (request, response) {
 
   var filePath = '.' + request.url;
   if (filePath == './')
@@ -53,4 +53,4 @@ var HttpServer = http.createServer(function (request, response) {
 
 })
 
-export default HttpServer
+export default httpServer

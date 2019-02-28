@@ -3,7 +3,7 @@ var WebSocketServer = require('websocket').server;
 var port = 3000;
 
 import GameServer from './server/GameServer'
-import HttpServer from './server/HttpServer'
+import httpServer from './server/httpServer'
 
 global.window = global.document = global;
 httpServer.listen(port);
