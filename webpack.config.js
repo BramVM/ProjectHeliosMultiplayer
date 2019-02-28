@@ -32,8 +32,8 @@ var config = {
 if(process && process.env){
   config.plugins.push(new webpack.DefinePlugin({
     'process.env': {
-      WEBSOCKET_URL: process.env.WEBSOCKET_URL,
-      PORT: process.env.PORT
+      WEBSOCKET_URL: JSON.stringify(process.env.WEBSOCKET_URL),
+      PORT: JSON.stringify(process.env.PORT)
     }
   }))
 }
