@@ -9,6 +9,8 @@ var GameServer = function () {
   const clients = [];
   this.start = () => {
     this.webSocketServer.on('request', function (request) {
+      console.log('websocket request')
+      console.log(request)
       var connection = request.accept(null, request.origin);
       clients.push(connection);
       connection.on('message', function (message) {

@@ -21,7 +21,8 @@ var id = (() => {
 
 var GameClient = function () {
   const gameClient = this;
-  var connection = new WebSocket(process.env.WEBSOCKET_URL+':'+process.env.PORT);
+  var HOST = location.origin.replace(/^http/, 'ws');
+  var connection = new WebSocket(HOST);
   connection.onopen = function () {
     connection.send(JSON.stringify({ action: Actions.CONNECTION, value: true, userId: id }));
     gameClient.activePlayer = gameState.addPlayer(id);
@@ -37,21 +38,21 @@ var GameClient = function () {
       var json = JSON.parse(message.data);
       if (json.action === Actions.UPDATE_PACKAGE && json.value) {
         json.value.players.forEach(serverPlayer => {
-          var player = gameState.players.find(player=>player.id===serverPlayer.id);
-          if(player){
+          var player = gameState.players.find(player => player.id === serverPlayer.id);
+          if (player) {
             player.force = serverPlayer.force;
             player.position = serverPlayer.position;
-            if(player!==gameClient.activePlayer){
+            if (player !== gameClient.activePlayer) {
               player.movement = serverPlayer.movement;
               player.direction = serverPlayer.direction;
             }
           }
-          else{
+          else {
             gameState.addPlayer(serverPlayer.id);
           }
         });
-        gameState.players.forEach((player, index, array) =>{
-          var serverPlayer = json.value.players.find(serverPlayer=>player.id===serverPlayer.id);
+        gameState.players.forEach((player, index, array) => {
+          var serverPlayer = json.value.players.find(serverPlayer => player.id === serverPlayer.id);
           if (!serverPlayer) array.splice(index, 1);
         })
       }
