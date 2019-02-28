@@ -10,7 +10,9 @@ module.exports = {
     },
     plugins: [
       new CleanWebpackPlugin(['dist']),
-      new Dotenv()
+      new Dotenv({
+        path: path.resolve(__dirname, './.env')
+      })
     ],
     output: {
         path: __dirname+'/dist/',

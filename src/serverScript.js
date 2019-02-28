@@ -7,7 +7,7 @@ import httpServer from './server/httpServer'
 
 global.window = global.document = global;
 httpServer.listen(process.env.PORT||port);
-console.log('http server running at http://127.0.0.1:' + (process.env.PORT||port) + '/');
+console.log('http server running at http://127.0.0.1:' + (process.env.PORT) + '/');
 
 var webSocketServer = new WebSocketServer({
   httpServer: httpServer
