@@ -25,7 +25,7 @@ var GameClient = function () {
   var connection = new WebSocket(HOST);
   connection.onopen = function () {
     console.log('opened websocket');
-    connection.send(JSON.stringify({ action: Actions.CONNECTION, value: true, userId: userId }));
+    connection.send(JSON.stringify({ action: Actions.CONNECTION, value: true, userId }));
     gameClient.activePlayer = gameState.addPlayer(userId);
   };
 
@@ -40,7 +40,6 @@ var GameClient = function () {
       var json = JSON.parse(message.data);
       if (json.action === Actions.UPDATE_PACKAGE && json.value) {
         json.value.players.forEach(serverPlayer => {
-          if (serverPlayer.id === userId) { gameClient.activePlayer = serverPlayer }
           var player = gameState.players.find(player => player.id === serverPlayer.id);
           if (player) {
             player.force = serverPlayer.force;
@@ -57,6 +56,7 @@ var GameClient = function () {
         gameState.players.forEach((player, index, array) => {
           var serverPlayer = json.value.players.find(serverPlayer => player.id === serverPlayer.id);
           if (!serverPlayer) array.splice(index, 1);
+          if (player.id === userId) { gameClient.activePlayer = player }
         })
       }
     } catch (e) {
@@ -72,12 +72,12 @@ var GameClient = function () {
   this.start = () => {
     canvasDrawer.gameState = gameState;
     inputInterface.onDirectionChange = () => {
-      connection.send(JSON.stringify({ action: Actions.DIRECTION_CHANGE, value: inputInterface.direction, userId: id }));
-      gameState.setPlayerDirection(id, inputInterface.direction);
+      connection.send(JSON.stringify({ action: Actions.DIRECTION_CHANGE, value: inputInterface.direction, userId }));
+      gameState.setPlayerDirection(userId, inputInterface.direction);
     }
     inputInterface.onMovementChange = () => {
-      connection.send(JSON.stringify({ action: Actions.MOVEMENT_CHANGE, value: inputInterface.movement, userId: id }));
-      gameState.setPlayerMovement(id, inputInterface.movement)
+      connection.send(JSON.stringify({ action: Actions.MOVEMENT_CHANGE, value: inputInterface.movement, userId }));
+      gameState.setPlayerMovement(userId, inputInterface.movement)
     }
     inputInterface.startListening();
     this.lastframetime = 0;
