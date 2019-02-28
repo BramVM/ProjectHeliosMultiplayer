@@ -24,11 +24,13 @@ var GameClient = function () {
   var HOST = location.origin.replace(/^http/, 'ws');
   var connection = new WebSocket(HOST);
   connection.onopen = function () {
+    console.log('opened websocket');
     connection.send(JSON.stringify({ action: Actions.CONNECTION, value: true, userId: id }));
     gameClient.activePlayer = gameState.addPlayer(id);
   };
 
   connection.onerror = function (error) {
+    console.log(error)
     // an error occurred when sending/receiving data
   };
   connection.onmessage = function (message) {
@@ -86,7 +88,9 @@ var GameClient = function () {
     if (this.dt > minDelay) {
       this.lastframetime = t;
       gameState.update(this.dt);
-      grid.update(gameClient.activePlayer.position)
+      if (gameClient.activePlayer) {
+        grid.update(gameClient.activePlayer.position)
+      }
       canvasDrawer.clear();
       //canvasDrawer.drawBackground();
       if (gameClient.activePlayer) {
