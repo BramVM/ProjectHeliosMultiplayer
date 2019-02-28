@@ -10,6 +10,9 @@
     "heroku-postbuild": "echo Skip build on Heroku",
     "heroku-prebuild": "npm install --dev"
   },
+  "engines": {
+    "node": "10.0.0"
+  },
   "keywords": [],
   "author": "Bram Van Mensel",
   "license": "SEE LICENSE IN <license.txt>",
@@ -17,7 +20,7 @@
     "clean-webpack-plugin": "^1.0.1",
     "terser": "^3.14.1",
     "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1",
+    "webpack-cli": "^3.2.3",
     "webpack-node-externals": "^1.7.2",
     "worker-loader": "^2.0.0"
   },
