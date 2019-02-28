@@ -10,14 +10,14 @@ module.exports = {
     },
     plugins: [
       new CleanWebpackPlugin(['dist']),
-      new webpack.DefinePlugin({
+      new this.DefinePlugin({
         'process.env': {
           WEBSOCKET_URL: process.env.WEBSOCKET_URL,
           PORT: process.env.PORT
         }
       }),
       new Dotenv({
-        path: path.resolve(__dirname, './.prod.env')
+        path: path.resolve(__dirname, './.env')
       })
     ],
     output: {
