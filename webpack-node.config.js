@@ -1,5 +1,6 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
     mode: "development",
@@ -7,6 +8,9 @@ module.exports = {
     entry: {
       serverScript: path.resolve('./src/serverScript.js'),
     },
+    plugins: [
+      new Dotenv()
+    ],
     output: {
         path: __dirname+'/dist/',
         filename: "[name].js"

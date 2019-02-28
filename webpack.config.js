@@ -1,24 +1,16 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const webpack = require('webpack');
 
-module.exports = {
+var config = {
     mode: "development",
     target: "web",
     entry: {
       clientScript: path.resolve('./src/clientScript.js'),
     },
-    plugins: [
+    plugins:[
       new CleanWebpackPlugin(['dist']),
-      new this.DefinePlugin({
-        'process.env': {
-          WEBSOCKET_URL: process.env.WEBSOCKET_URL,
-          PORT: process.env.PORT
-        }
-      }),
-      new Dotenv({
-        path: path.resolve(__dirname, './.env')
-      })
     ],
     output: {
         path: __dirname+'/dist/',
@@ -37,3 +29,17 @@ module.exports = {
       ]
     }
 }
+if(process && process.env){
+  config.plugins.push(new webpack.DefinePlugin({
+    'process.env': {
+      WEBSOCKET_URL: process.env.WEBSOCKET_URL,
+      PORT: process.env.PORT
+    }
+  }))
+}
+else {
+  config.plugins.push(new Dotenv({
+    path: path.resolve(__dirname, './.env')
+  }))
+}
+module.exports = config;
