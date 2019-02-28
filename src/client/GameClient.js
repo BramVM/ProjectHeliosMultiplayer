@@ -21,7 +21,7 @@ var id = (() => {
 
 var GameClient = function () {
   const gameClient = this;
-  var connection = new WebSocket('ws://127.0.0.1:'+(process.env.PORT||3000));
+  var connection = new WebSocket(process.env.WEBSOCKET_URL+':'+process.env.PORT);
   connection.onopen = function () {
     connection.send(JSON.stringify({ action: Actions.CONNECTION, value: true, userId: id }));
     gameClient.activePlayer = gameState.addPlayer(id);

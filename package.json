@@ -25,6 +25,7 @@
     "worker-loader": "^2.0.0"
   },
   "dependencies": {
+    "dotenv-webpack": "^1.7.0",
     "seedrandom": "^2.4.4",
     "websocket": "^1.0.28"
   },
