@@ -1,53 +1,61 @@
 import seedrandom from 'seedrandom'
+import { seedrandomBetween } from '../shared/helperFunctions'
 
-const maxSize = 600
-const minSize = 300
+function calculateColor(colorRange, seedstring) {
+  const r = seedrandomBetween(colorRange.rMin, colorRange.rMax, 'r' + seedstring)
+  const g = seedrandomBetween(colorRange.gMin, colorRange.gMax, 'g' + seedstring)
+  const b = seedrandomBetween(colorRange.bMin, colorRange.bMax, 'b' + seedstring)
+  const a = seedrandomBetween(colorRange.aMin, colorRange.aMax, 'a' + seedstring)
+  return { r, g, b, a }
+}
 
 class Planet {
-  constructor(tile) {
-    this.tile = tile;
-    this.positionInTile = {
-      x: undefined,
-      y: undefined
-    };
-    this.color = {
-      r: undefined,
-      g: undefined,
-      b: undefined
-    }
-
-    Math.seedrandom("s" + tile.position.x + tile.position.y);
-    this.size = minSize + Math.random() * (maxSize - minSize);
-    Math.seedrandom("x" + tile.position.x + tile.position.y);
-    this.positionInTile.x = Math.random() * (tile.size.x - this.size) + this.size / 2;
-    Math.seedrandom("y" + tile.position.x + tile.position.y);
-    this.positionInTile.y = Math.random() * (tile.size.y - this.size) + this.size / 2;
-
-    this.positionInUniverse = {
-      x: tile.position.x + this.positionInTile.x,
-      y: tile.position.y + this.positionInTile.y
-    }
-
-    const seedString = String(this.positionInUniverse.x) + String(this.positionInUniverse.Y)
-    Math.seedrandom(seedString + "r");
-    this.color.r = 100 + Math.random() * 155;
-    Math.seedrandom(seedString + "g");
-    this.color.g = 100 + Math.random() * 155;
-    Math.seedrandom(seedString + "b");
-    this.color.b = 100 + Math.random() * 155;
-    Math.seedrandom(seedString + "rotation");
-    this.rotation = Math.PI * 2 * Math.random();
-    Math.seedrandom(seedString + "atmos");
+  constructor(position, size, baseColorRange, textureColorRange) {
+    this.positionInTile = position
+    this.size = size
+    const seedstring = String(position.x) + String(position.y)
+    this.color = calculateColor(baseColorRange, seedstring + "color")
+    Math.seedrandom(seedstring + "rotation");
+    this.rotation = 2 * Math.PI * Math.random();
     this.atmosphereRings = Math.round(Math.random() * 2); // 0, 1 or 2
-    this.texture = new RingTexture(seedString);
+    Math.seedrandom(seedstring + "textrure");
+    if (Math.random() > 0.5) {
+      this.texture = new RingTexture(seedstring, textureColorRange);
+    }
+    else {
+      this.texture = new CicleTexture(seedstring, textureColorRange, this.size);
+    }
   }
 }
 
 class RingTexture {
-  constructor(seedString) {
+  constructor(seedstring, colorRange) {
     this.type = 'ringTexture'
-    Math.seedrandom(seedString + "texture");
+    this.color = calculateColor(colorRange, seedstring + "textureColor")
+    Math.seedrandom(seedstring + "texture");
     this.rings = 1 + Math.round(Math.random() * 2)
+  }
+}
+
+class CicleTexture {
+  constructor(seedstring, colorRange, planetSize) {
+    this.type = 'cicleTexture'
+    this.color = calculateColor(colorRange, seedstring + "textureColor")
+    this.circles = []
+    Math.seedrandom(seedstring + "number");
+    const numberOfCircles = Math.round(4 + Math.random() * 4)
+    const minCicleSize = planetSize / 12
+    const maxCicleSize = planetSize / 6
+    for (let index = 0; index < numberOfCircles; index++) {
+      const circle = {};
+      Math.seedrandom(seedstring + index + "angle");
+      circle.angle = Math.PI * 2 * Math.random();
+      Math.seedrandom(seedstring + index + "distance");
+      circle.distance = (planetSize + minCicleSize) / 4 * Math.sqrt(Math.random());
+      Math.seedrandom(seedstring + index + "size");
+      circle.size = minCicleSize + (maxCicleSize - minCicleSize) * Math.random();
+      this.circles.push(circle)
+    }
   }
 }
 

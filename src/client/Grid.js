@@ -10,10 +10,10 @@ var Grid = function () {
   };
   tileWorker.onmessage = function (event) {
     var message = event.data
-    switch(message.type) {
+    switch (message.type) {
       case "add_tile":
         grid.tiles.push(message.tile);
-      break;
+        break;
     }
   };
   this.tiles = []
@@ -27,8 +27,8 @@ var Grid = function () {
       id: String(gridIndex.x) + String(gridIndex.y),
       gridIndex,
       position: {
-        x: this.size.x * gridIndex.x - this.size.x / 2,
-        y: this.size.y * gridIndex.y - this.size.y / 2
+        x: this.size.x * gridIndex.x,
+        y: this.size.y * gridIndex.y
       }
     }
     return result;

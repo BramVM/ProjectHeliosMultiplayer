@@ -4,6 +4,9 @@ import InputInterface from './InputInterface'
 import GameState from '../shared/GameState'
 import CanvasDrawer from './CanvasDrawer'
 import Grid from './Grid'
+import {
+  getBiomeLight
+} from './biomeCalculations'
 
 
 const inputInterface = new InputInterface();
@@ -24,7 +27,6 @@ var GameClient = function () {
   var HOST = location.origin.replace(/^http/, 'ws');
   var connection = new WebSocket(HOST);
   connection.onopen = function () {
-    console.log('opened websocket');
     connection.send(JSON.stringify({ action: Actions.CONNECTION, value: true, userId }));
     gameClient.activePlayer = gameState.addPlayer(userId);
   };
@@ -93,12 +95,14 @@ var GameClient = function () {
         grid.update(gameClient.activePlayer.position)
       }
       canvasDrawer.clear();
-      //canvasDrawer.drawBackground();
       if (gameClient.activePlayer) {
         canvasDrawer.setPerspective(gameClient.activePlayer.position.x, gameClient.activePlayer.position.y);
       }
       canvasDrawer.drawTiles(grid.tiles);
-      canvasDrawer.drawDarkness(0);
+      if (gameClient.activePlayer) {
+        canvasDrawer.drawDarkness(1 - getBiomeLight(gameClient.activePlayer.position).value);
+      }
+
       canvasDrawer.drawPlayers();
     }
     this.updateid = window.requestAnimationFrame(this.updateLoop.bind(this), this.viewport);

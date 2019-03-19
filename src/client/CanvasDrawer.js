@@ -1,4 +1,7 @@
 import Cord from '../shared/Cord'
+import seedrandom from 'seedrandom'
+
+import { Biomes, BiomeTypes } from '../shared/constants'
 
 
 var CanvasDrawer = function () {
@@ -25,15 +28,15 @@ var CanvasDrawer = function () {
   }
   this.drawPlayer = (player) => {
     var context = canvasdrawer.ctx;
-    player.trail.forEach((item, index) =>{
+    player.trail.forEach((item, index) => {
       context.save();
       context.translate(item.x, -item.y);
       context.translate(-this.perspective.x, -this.perspective.y);
       context.beginPath();
       context.shadowBlur = 5;
-      context.shadowColor = "rgba(255, 255, 255, "+(index+1)/7+")";
-      context.fillStyle = "rgba(100, 100, 255, "+(index+1)/14+")";
-      context.arc(1-Math.random()*2, 1-Math.random()*2, 8, 0, 2 * Math.PI);
+      context.shadowColor = "rgba(255, 255, 255, " + (index + 1) / 7 + ")";
+      context.fillStyle = "rgba(100, 100, 255, " + (index + 1) / 14 + ")";
+      context.arc(1 - Math.random() * 2, 1 - Math.random() * 2, 8, 0, 2 * Math.PI);
       context.fill();
       context.closePath();
       context.restore();
@@ -92,7 +95,7 @@ var CanvasDrawer = function () {
     if (player.poweringUp > 0) accelerator = Math.sin(player.poweringUp / 100 * Math.PI / 2);
     var power = (1 + Math.sin(accelerator * Math.PI * 5 - 0.5 * Math.PI)) / 2
     if (player.poweringUp < 100 && power * Math.random() < 0.5) power = 0;
-    if(player.poweringUp<70) power = power*Math.random();
+    if (player.poweringUp < 70) power = power * Math.random();
     context.shadowColor = "rgba(200, 230, 255, " + power + ")";
     context.fillStyle = "rgba(200, 230, 255, " + power + ")";
     context.closePath();
@@ -170,82 +173,71 @@ var CanvasDrawer = function () {
       this.drawPlayer(player);
     })
   }
-  this.drawDarkness = function(darkness){
+  this.drawDarkness = function (darkness) {
     const darknessCanvas = new OffscreenCanvas(this.viewWidth, this.viewHeight)
     const context = darknessCanvas.getContext('2d');
-		//draw visual effect for lights
-		
-		//var fullCanvasPath = new Path2D();
-		//radial darkness
-		var _radialLightGradient=context.createRadialGradient(context.canvas.width/2,context.canvas.height/2,0,context.canvas.width/2,context.canvas.height/2,1000);
-		_radialLightGradient.addColorStop(0,"rgba(0, 0, 0, " + darkness +")");
-  	_radialLightGradient.addColorStop(1,"#000");
-  	context.beginPath();
-  	context.moveTo(0, 0);
-  	context.lineTo(context.canvas.width, 0);
-		context.lineTo(context.canvas.width, context.canvas.height);
-		context.lineTo(0,context.canvas.height);
-		context.lineTo(0,0);
-		context.closePath();
-		context.fillStyle=_radialLightGradient;
-		context.fill();
-		//extract player headlights
-    context.globalCompositeOperation= "destination-out";
-    this.gameState.players.forEach(player=>{
+    //draw visual effect for lights
+
+    //var fullCanvasPath = new Path2D();
+    //radial darkness
+    var _radialLightGradient = context.createRadialGradient(context.canvas.width / 2, context.canvas.height / 2, 0, context.canvas.width / 2, context.canvas.height / 2, 1000);
+    _radialLightGradient.addColorStop(0, "rgba(0, 0, 0, " + darkness + ")");
+    _radialLightGradient.addColorStop(1, "#000");
+    context.beginPath();
+    context.moveTo(0, 0);
+    context.lineTo(context.canvas.width, 0);
+    context.lineTo(context.canvas.width, context.canvas.height);
+    context.lineTo(0, context.canvas.height);
+    context.lineTo(0, 0);
+    context.closePath();
+    context.fillStyle = _radialLightGradient;
+    context.fill();
+    //extract player headlights
+    context.globalCompositeOperation = "destination-out";
+    this.gameState.players.forEach(player => {
       context.save();
       context.translate(player.position.x, -player.position.y);
       context.translate(-this.perspective.x, -this.perspective.y);
-      context.rotate(player.rotation-Math.PI/2);
+      context.rotate(player.rotation - Math.PI / 2);
       context.translate(60, 0);
       context.beginPath();
-				context.moveTo(0, 0);
-				context.arc(0, 0, player.headlight.range, -player.headlight.angle/2, player.headlight.angle/2);
-				context.moveTo(0, 0);
-				context.closePath();
-				var _spotLightGradient=context.createRadialGradient(0, 0,0,0, 0,player.headlight.range);
-				var accelerator = 0
-				if(player.poweringUp>0) accelerator=Math.sin(player.poweringUp/100*Math.PI/2);
-				var power = (1+Math.sin(accelerator*Math.PI*5-0.5*Math.PI))/2
-				if(player.poweringUp<100&&power*Math.random()<0.5) power = 0;
-				_spotLightGradient.addColorStop(0,"rgba(0, 0, 0, " + 1*player.headlight.intensity*power +")");
-				_spotLightGradient.addColorStop(1,"transparent");
-				context.fillStyle=_spotLightGradient;
-				context.fill();
-				var numberOfRays = 3;
-				if(numberOfRays>1){
-					var angleOffset = 0;
-					var angleOfRay = player.headlight.angle / (numberOfRays*2-1);
-					for (var j = numberOfRays - 1; j >= 0; j--) {
-						angleOffset = j * player.headlight.angle / (numberOfRays*2-1) * 2;
-						context.beginPath();
-						context.moveTo(0, 0);
-						context.arc(0, 0, player.headlight.range, -player.headlight.angle/2 + angleOffset, -player.headlight.angle/2 + angleOffset + angleOfRay);
-						context.moveTo(0, 0);
-						context.closePath();
-						context.fillStyle=_spotLightGradient;
-						context.fill();
-					}
+      context.moveTo(0, 0);
+      context.arc(0, 0, player.headlight.range, -player.headlight.angle / 2, player.headlight.angle / 2);
+      context.moveTo(0, 0);
+      context.closePath();
+      var _spotLightGradient = context.createRadialGradient(0, 0, 0, 0, 0, player.headlight.range);
+      var accelerator = 0
+      if (player.poweringUp > 0) accelerator = Math.sin(player.poweringUp / 100 * Math.PI / 2);
+      var power = (1 + Math.sin(accelerator * Math.PI * 5 - 0.5 * Math.PI)) / 2
+      if (player.poweringUp < 100 && power * Math.random() < 0.5) power = 0;
+      _spotLightGradient.addColorStop(0, "rgba(0, 0, 0, " + 1 * player.headlight.intensity * power + ")");
+      _spotLightGradient.addColorStop(1, "transparent");
+      context.fillStyle = _spotLightGradient;
+      context.fill();
+      var numberOfRays = 3;
+      if (numberOfRays > 1) {
+        var angleOffset = 0;
+        var angleOfRay = player.headlight.angle / (numberOfRays * 2 - 1);
+        for (var j = numberOfRays - 1; j >= 0; j--) {
+          angleOffset = j * player.headlight.angle / (numberOfRays * 2 - 1) * 2;
+          context.beginPath();
+          context.moveTo(0, 0);
+          context.arc(0, 0, player.headlight.range, -player.headlight.angle / 2 + angleOffset, -player.headlight.angle / 2 + angleOffset + angleOfRay);
+          context.moveTo(0, 0);
+          context.closePath();
+          context.fillStyle = _spotLightGradient;
+          context.fill();
         }
-        context.restore();
+      }
+      context.restore();
     })
     context.globalCompositeOperation = "source-over";
-    canvasdrawer.ctx.drawImage(darknessCanvas,0,0);
-	}
-  this.drawBackground = () => {
-    var context = canvasdrawer.ctx;
-    context.beginPath();
-    context.moveTo(0, 0);
-    context.lineTo(context.canvas.width, 0);
-    context.lineTo(context.canvas.width, context.canvas.height);
-    context.lineTo(0, context.canvas.height);
-    context.lineTo(0, 0);
-    context.closePath();
-    // seed random color on this.perspective
-    context.fillStyle = "rgba(50,30,50,1)";
-    context.fill();
+    canvasdrawer.ctx.drawImage(darknessCanvas, 0, 0);
   }
   this.drawTile = (tile) => {
     var context = canvasdrawer.ctx;
+    const defualtColor = Biomes.find(biome => biome.type === BiomeTypes.DEFAULT).backgroundColor
+    const { biomeBackgroundColor, biomeMid, biomeSize } = tile
     context.beginPath();
     context.moveTo(0, 0);
     context.lineTo(context.canvas.width, 0);
@@ -253,10 +245,23 @@ var CanvasDrawer = function () {
     context.lineTo(0, context.canvas.height);
     context.lineTo(0, 0);
     context.closePath();
-    context.strokeStyle = "rgba(0,255,255,1)";
-    context.stroke();
-    tile.stars.forEach(star => { this.drawStar(star.position, star.size); })
-    this.drawPlanet(tile.planet);
+    context.fillStyle = "rgba(" + defualtColor.r + ", " + defualtColor.g + ", " + defualtColor.b + ", 1)";
+    context.fill();
+    // context.strokeStyle = "rgba(0,255,255,1)";
+    // context.stroke();
+    context.beginPath();
+    context.arc(biomeMid.x, biomeMid.y, biomeSize / 2, 0, 2 * Math.PI, false);
+    const biomeGradient = context.createRadialGradient(biomeMid.x, biomeMid.y, 0, biomeMid.x, biomeMid.y, biomeSize / 2);
+    biomeGradient.addColorStop(0, "rgba(" + biomeBackgroundColor.r + ", " + biomeBackgroundColor.g + ", " + biomeBackgroundColor.b + ", " + biomeBackgroundColor.a + ")");
+    biomeGradient.addColorStop(1, "transparent");
+    context.fillStyle = biomeGradient;
+    // context.strokeStyle = "rgba(0,255,255,1)";
+    // context.stroke();
+    context.fill();
+    context.closePath();
+    tile.nebulaFields.forEach(nebula => canvasdrawer.drawNebula(nebula));
+    tile.stars.forEach(star => { this.drawStar(star); })
+    tile.planets.forEach(planet => { this.drawPlanet(planet); })
   }
   this.drawTiles = (tiles) => {
     var context = canvasdrawer.ctx;
@@ -264,16 +269,34 @@ var CanvasDrawer = function () {
       context.putImageData(tile.imageData, tile.position.x - this.perspective.x, tile.position.y - this.perspective.y);
     })
   }
-  this.drawStar = function (position, size) {
+  this.drawStar = function (star) {
+    const { position, size, color } = star
     const context = canvasdrawer.ctx;
-    const star = context.createRadialGradient(position.x, position.y, 0, position.x, position.y, size / 2);
-    star.addColorStop(0, "rgba(255, 255, 255, 1)");
-    star.addColorStop(1, "transparent");
+    const starGradient = context.createRadialGradient(position.x, position.y, 0, position.x, position.y, size / 2);
+    starGradient.addColorStop(0, "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")");
+    starGradient.addColorStop(1, "transparent");
     context.beginPath();
     context.arc(position.x, position.y, size / 2, 0, 2 * Math.PI, false);
-    context.fillStyle = star;
+    context.fillStyle = starGradient;
     context.fill();
     context.closePath();
+  }
+  this.drawNebula = function (nebula) {
+    var context = canvasdrawer.ctx;
+    nebula.circles.forEach(circle => {
+      context.save();
+      context.translate(nebula.position.x, nebula.position.y);
+      context.rotate(circle.angle);
+      context.beginPath();
+      context.arc(0, circle.distance, circle.size, 0, 2 * Math.PI, false);
+      const fog = context.createRadialGradient(0, circle.distance, 0, 0, circle.distance, circle.size);
+      fog.addColorStop(0, "rgba(" + circle.color.r + "," + circle.color.g + ", " + circle.color.b + "," + circle.color.a + ")");
+      fog.addColorStop(1, "transparent");
+      context.fillStyle = fog;
+      context.fill();
+      context.closePath();
+      context.restore();
+    })
   }
   this.drawPlanet = function (planet) {
     var context = canvasdrawer.ctx;
@@ -290,12 +313,12 @@ var CanvasDrawer = function () {
     context.fillStyle = atmosphere;
     context.fill();
     context.closePath();
-    
+
     const ring = context.createRadialGradient(0, 0, radius / 2, 0, 0, radius / 1.5);
-    const stops = planet.atmosphereRings*2+1;
+    const stops = planet.atmosphereRings * 2 + 1;
     for (let index = 0; index < planet.atmosphereRings; index++) {
-      const stop1 = (2*(index+1)-1)/stops
-      const stop2 = 2*(index+1)/stops
+      const stop1 = (2 * (index + 1) - 1) / stops
+      const stop2 = 2 * (index + 1) / stops
       ring.addColorStop(stop1, "transparent");
       ring.addColorStop(stop2, "rgba(" + color.r + "," + color.g + ", " + color.b + ", 0.2)");
     }
@@ -317,19 +340,48 @@ var CanvasDrawer = function () {
     context.fill();
     context.closePath();
     //texture
-    if(planet.texture && planet.texture.type === "ringTexture"){
+    if (planet.texture && planet.texture.type === "ringTexture") {
+      var color = planet.texture.color;
       const rings = planet.texture.rings;
-      const offset = Math.sqrt(Math.pow(radius,2)+Math.pow(radius,2))
+      const offset = Math.sqrt(Math.pow(radius, 2) + Math.pow(radius, 2))
       for (let index = 0; index < rings; index++) {
-        const lineWidth = radius/rings/5*2
-        const size = radius*3/2 + (index+1)*radius/(rings+1);
+        const lineWidth = radius / rings / 5 * 2
+        const size = radius * 3 / 2 + (index + 1) * radius / (rings + 1);
         context.beginPath();
         context.arc(offset, offset, size, 0, 2 * Math.PI, false);
-        context.strokeStyle = "rgba(0, 0, 0, 0.4)"
+        context.strokeStyle = "rgba(" + color.r + "," + color.g + ", " + color.b + ", " + color.a + ")";
         context.lineWidth = lineWidth;
         context.stroke();
         context.closePath();
       }
+    }
+    if (planet.texture && planet.texture.type === "cicleTexture") {
+      var color = planet.texture.color;
+      console.log(color)
+      const textureCanvas = new OffscreenCanvas(planet.size, planet.size)
+      const textureContext = textureCanvas.getContext('2d');
+      textureContext.beginPath();
+      textureContext.moveTo(0, 0);
+      textureContext.lineTo(textureContext.canvas.width, 0);
+      textureContext.lineTo(textureContext.canvas.width, textureContext.canvas.height);
+      textureContext.lineTo(0, textureContext.canvas.height);
+      textureContext.lineTo(0, 0);
+      textureContext.closePath();
+      textureContext.strokeStyle = "rgba(" + color.r + "," + color.g + ", " + color.b + ", " + color.a + ")";
+      textureContext.stroke();
+      planet.texture.circles.forEach(circle => {
+        textureContext.save();
+        textureContext.translate(planet.size / 2, planet.size / 2);
+        textureContext.rotate(circle.angle);
+        textureContext.translate(circle.distance, 0);
+        textureContext.beginPath();
+        textureContext.arc(0, 0, circle.size / 2, 0, 2 * Math.PI, false);
+        textureContext.fillStyle = "rgba(" + color.r + "," + color.g + ", " + color.b + ", " + color.a + ")";
+        textureContext.fill();
+        textureContext.closePath();
+        textureContext.restore();
+      })
+      context.drawImage(textureCanvas, -planet.size / 2, -planet.size / 2);
     }
     //shadow
     const outlineShadow = context.createRadialGradient(0, 0, radius / 4, 0, 0, radius / 4 * 3);
@@ -349,49 +401,62 @@ var CanvasDrawer = function () {
     context.fill();
     context.closePath();
     context.restore();
-    //
 
   }
+  // this.drawRainbow = function(position,size){
+  // 	self.layer1.context.save() 
+  // 	_ring = self.layer1.context.createRadialGradient(position.x, position.y,0,position.x, position.y,size/2);
+  // 	_ring.addColorStop(0.98,"transparent");
+  // 	_ring.addColorStop(0.985,"rgba(0, 0, 255, 0.03)");
+  // 	_ring.addColorStop(0.99,"rgba(0, 255, 0, 0.03)");
+  // 	_ring.addColorStop(0.995,"rgba(255, 0, 0, 0.03)");
+  // 	_ring.addColorStop(1,"transparent");
+  // 	self.layer1.context.beginPath();
+  // 	self.layer1.context.arc(position.x , position.y , size/2, 0, 2 * Math.PI, false);
+  // 	self.layer1.context.fillStyle = _ring;
+  //    	self.layer1.context.fill();
+  // 	self.layer1.context.closePath();
+  // }
   // this.drawRandomShape = function(context,position, size){
-	// 	var minDistance = size/5;
-	// 	var numberOfPoints = 6
-	// 	context.beginPath();
-	// 	Math.seedrandom(""+String(position.x) + String(position.y));
-	// 	for (var i = 0; i < numberOfPoints; i++) {
-	// 		if(i!=0){
-	// 			bezierpoint1 = new this.classes.cord(prevPoint.x, prevPoint.y);
-	// 			bezierpoint1.moveByDistanceAndAngle(prevOffset/2,prevAngle+Math.PI/2);
-	// 		}
-			 
-	// 		calculatedPosition = new this.classes.cord(position.x, position.y);
-	// 		prevAngle = Math.PI*2/numberOfPoints*i;
-	// 		prevOffset = minDistance + Math.random()*(size-minDistance);
-	// 		calculatedPosition.moveByDistanceAndAngle(prevOffset,Math.PI*2/numberOfPoints*i);
-	// 		Math.seedrandom(""+String(calculatedPosition.x) + String(calculatedPosition.y));
-	// 		if(i===0){
-	// 			context.moveTo(calculatedPosition.x, calculatedPosition.y);
-	// 			firstpoint = calculatedPosition;
-	// 			firstAngle= prevAngle;
-	// 			firstOffset= prevOffset;
-	// 		}
-	// 		else{
-	// 			bezierpoint2 = new this.classes.cord(calculatedPosition.x, calculatedPosition.y);
-	// 			bezierpoint2.moveByDistanceAndAngle(prevOffset/2,prevAngle-Math.PI/2);
-	// 			context.bezierCurveTo(bezierpoint1.x, bezierpoint1.y, bezierpoint2.x, bezierpoint2.y, calculatedPosition.x, calculatedPosition.y);
-	// 		}
-	// 		prevPoint = calculatedPosition;
-	// 	}
-	// 	bezierpoint1 = new this.classes.cord(calculatedPosition.x, calculatedPosition.y);
-	// 	bezierpoint1.moveByDistanceAndAngle(prevOffset/2,prevAngle+Math.PI/2);
-	// 	bezierpoint2 = new this.classes.cord(firstpoint.x, firstpoint.y);
-	// 	bezierpoint2.moveByDistanceAndAngle(firstOffset/2,firstAngle-Math.PI/2);
-	// 	context.bezierCurveTo(bezierpoint1.x, bezierpoint1.y, bezierpoint2.x, bezierpoint2.y, firstpoint.x, firstpoint.y);
-	// 	Math.seedrandom();
-	// 	context.fillStyle = "rgba(0, 0, 0, 0.4)";
-	// 	context.fill();
-	// 	context.closePath();
+  // 	var minDistance = size/5;
+  // 	var numberOfPoints = 6
+  // 	context.beginPath();
+  // 	Math.seedrandom(""+String(position.x) + String(position.y));
+  // 	for (var i = 0; i < numberOfPoints; i++) {
+  // 		if(i!=0){
+  // 			bezierpoint1 = new this.classes.cord(prevPoint.x, prevPoint.y);
+  // 			bezierpoint1.moveByDistanceAndAngle(prevOffset/2,prevAngle+Math.PI/2);
+  // 		}
 
-	// }
+  // 		calculatedPosition = new this.classes.cord(position.x, position.y);
+  // 		prevAngle = Math.PI*2/numberOfPoints*i;
+  // 		prevOffset = minDistance + Math.random()*(size-minDistance);
+  // 		calculatedPosition.moveByDistanceAndAngle(prevOffset,Math.PI*2/numberOfPoints*i);
+  // 		Math.seedrandom(""+String(calculatedPosition.x) + String(calculatedPosition.y));
+  // 		if(i===0){
+  // 			context.moveTo(calculatedPosition.x, calculatedPosition.y);
+  // 			firstpoint = calculatedPosition;
+  // 			firstAngle= prevAngle;
+  // 			firstOffset= prevOffset;
+  // 		}
+  // 		else{
+  // 			bezierpoint2 = new this.classes.cord(calculatedPosition.x, calculatedPosition.y);
+  // 			bezierpoint2.moveByDistanceAndAngle(prevOffset/2,prevAngle-Math.PI/2);
+  // 			context.bezierCurveTo(bezierpoint1.x, bezierpoint1.y, bezierpoint2.x, bezierpoint2.y, calculatedPosition.x, calculatedPosition.y);
+  // 		}
+  // 		prevPoint = calculatedPosition;
+  // 	}
+  // 	bezierpoint1 = new this.classes.cord(calculatedPosition.x, calculatedPosition.y);
+  // 	bezierpoint1.moveByDistanceAndAngle(prevOffset/2,prevAngle+Math.PI/2);
+  // 	bezierpoint2 = new this.classes.cord(firstpoint.x, firstpoint.y);
+  // 	bezierpoint2.moveByDistanceAndAngle(firstOffset/2,firstAngle-Math.PI/2);
+  // 	context.bezierCurveTo(bezierpoint1.x, bezierpoint1.y, bezierpoint2.x, bezierpoint2.y, firstpoint.x, firstpoint.y);
+  // 	Math.seedrandom();
+  // 	context.fillStyle = "rgba(0, 0, 0, 0.4)";
+  // 	context.fill();
+  // 	context.closePath();
+
+  // }
   this.clear = () => {
     var context = canvasdrawer.ctx;
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);

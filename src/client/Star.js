@@ -1,7 +1,8 @@
 class Star {
-  constructor(position, size) {
+  constructor(position, size, color) {
     this.position = position;
     this.size = size;
+    this.color = color;
   }
 }
 
