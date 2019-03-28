@@ -51,21 +51,22 @@ export function getBiomeLight(position) {
 
 export function checkBiome(position) {
   const { x, y } = position
-  const frequency = Math.PI / 9000;
-  const sinA = 0.5 * Math.sin((x - y) * frequency);
-  const sinB = 0.5 * Math.sin((x + y) * frequency);
-  const indexOfSinA = Math.floor((x) / (Math.PI / frequency))
-  const indexOfSinB = Math.floor((y + Math.PI / frequency / 2) / (Math.PI / frequency));
+  const biomeSize = 8000
+  const frequency = Math.PI / biomeSize;
+  const sinA = 0.5 * Math.sin((x - (y + biomeSize / 2)) * frequency);
+  const sinB = 0.5 * Math.sin((x + (y + biomeSize / 2)) * frequency);
+  const indexOfSinA = Math.floor((x) / (biomeSize))
+  const indexOfSinB = Math.floor((y) / (biomeSize));
   // const seedstring = "biome" + indexOfSinA + "" +indexOfSinB;
   // Math.seedrandom(seedstring);
   const biomeMid = {
-    x: indexOfSinA * Math.PI / frequency + Math.PI / frequency / 2,
-    y: indexOfSinB * Math.PI / frequency,
+    x: indexOfSinA * biomeSize + biomeSize / 2,
+    y: indexOfSinB * biomeSize + biomeSize / 2,
   }
   return {
     biome: Biomes.find(biome => biome.type === BiomeTypes.TOXIC),
     intensity: Math.abs(sinA + sinB),
     mid: biomeMid,
-    size: Math.PI / frequency
+    size: biomeSize
   };
 }

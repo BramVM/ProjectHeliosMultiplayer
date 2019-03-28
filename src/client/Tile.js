@@ -39,6 +39,7 @@ class Tile {
     this.planets = this.generatePlanets(tileBiomeAverage, seedString);
     this.nebulaFields = this.generateNebulaFields(tileBiomeAverage, seedString);
     this.stars = this.generateStars(tileBiomeAverage);
+    this.biomeReceptors = this.generateBiomeReceptors();
     canvasDrawer.drawTile(this);
     this.imageData = ctx.getImageData(0, 0, gridSize.x, gridSize.y);
     canvasDrawer.clear();
@@ -118,6 +119,33 @@ class Tile {
       cursor.x = cursor.x + stepSizeX;
     }
     return stars
+  }
+
+  generateBiomeReceptors() {
+
+    const points = [];
+    const width = gridSize.x;
+    const height = gridSize.y;
+    const cursor = { x: 0, y: 0 };
+    let stepSizeY = height / 10
+    let stepSizeX = width / 10
+
+    while (cursor.x < width) {
+      cursor.y = 0;
+      while (cursor.y < height) {
+        var size = 0 + (20 - 0) * checkBiome({ x: cursor.x + this.position.x, y: cursor.y + this.position.y }).intensity;
+        points.push({
+          size,
+          position: {
+            x: cursor.x,
+            y: cursor.y
+          }
+        });
+        cursor.y = cursor.y + stepSizeY;
+      }
+      cursor.x = cursor.x + stepSizeX;
+    }
+    return points
   }
 }
 

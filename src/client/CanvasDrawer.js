@@ -247,27 +247,37 @@ var CanvasDrawer = function () {
     context.closePath();
     context.fillStyle = "rgba(" + defualtColor.r + ", " + defualtColor.g + ", " + defualtColor.b + ", 1)";
     context.fill();
-    // context.strokeStyle = "rgba(0,255,255,1)";
-    // context.stroke();
+    context.strokeStyle = "rgba(0,255,255,1)";
+    context.stroke();
     context.beginPath();
     context.arc(biomeMid.x, biomeMid.y, biomeSize / 2, 0, 2 * Math.PI, false);
     const biomeGradient = context.createRadialGradient(biomeMid.x, biomeMid.y, 0, biomeMid.x, biomeMid.y, biomeSize / 2);
     biomeGradient.addColorStop(0, "rgba(" + biomeBackgroundColor.r + ", " + biomeBackgroundColor.g + ", " + biomeBackgroundColor.b + ", " + biomeBackgroundColor.a + ")");
     biomeGradient.addColorStop(1, "transparent");
     context.fillStyle = biomeGradient;
-    // context.strokeStyle = "rgba(0,255,255,1)";
-    // context.stroke();
+    context.strokeStyle = "rgba(0,255,255,1)";
+    context.stroke();
     context.fill();
     context.closePath();
     tile.nebulaFields.forEach(nebula => canvasdrawer.drawNebula(nebula));
     tile.stars.forEach(star => { this.drawStar(star); })
     tile.planets.forEach(planet => { this.drawPlanet(planet); })
+    if (tile.biomeReceptors) tile.biomeReceptors.forEach(point => { this.drawBiomePoints(point); })
   }
   this.drawTiles = (tiles) => {
     var context = canvasdrawer.ctx;
     tiles.forEach(tile => {
       context.putImageData(tile.imageData, tile.position.x - this.perspective.x, tile.position.y - this.perspective.y);
     })
+  }
+  this.drawBiomePoints = function (point) {
+    const { position, size } = point
+    const context = canvasdrawer.ctx;
+    context.beginPath();
+    context.arc(position.x, position.y, size / 2, 0, 2 * Math.PI, false);
+    context.fillStyle = "rgba(0,255,255,1)";
+    context.fill();
+    context.closePath();
   }
   this.drawStar = function (star) {
     const { position, size, color } = star
@@ -357,7 +367,6 @@ var CanvasDrawer = function () {
     }
     if (planet.texture && planet.texture.type === "cicleTexture") {
       var color = planet.texture.color;
-      console.log(color)
       const textureCanvas = new OffscreenCanvas(planet.size, planet.size)
       const textureContext = textureCanvas.getContext('2d');
       textureContext.beginPath();

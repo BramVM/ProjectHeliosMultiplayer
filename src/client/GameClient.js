@@ -4,6 +4,7 @@ import InputInterface from './InputInterface'
 import GameState from '../shared/GameState'
 import CanvasDrawer from './CanvasDrawer'
 import Grid from './Grid'
+import ServerUpdateBuffer from './ServerUpdateBuffer'
 import {
   getBiomeLight
 } from './biomeCalculations'
@@ -13,6 +14,7 @@ const inputInterface = new InputInterface();
 const canvasDrawer = new CanvasDrawer();
 const gameState = new GameState();
 const grid = new Grid();
+const serverUpdateBuffer = new ServerUpdateBuffer();
 
 // generate random id (needs refinement)
 var userId = (() => {
@@ -41,28 +43,10 @@ var GameClient = function () {
     try {
       var json = JSON.parse(message.data);
       if (json.action === Actions.UPDATE_PACKAGE && json.value) {
-        json.value.players.forEach(serverPlayer => {
-          var player = gameState.players.find(player => player.id === serverPlayer.id);
-          if (player) {
-            player.force = serverPlayer.force;
-            player.position = serverPlayer.position;
-            if (player !== gameClient.activePlayer) {
-              player.movement = serverPlayer.movement;
-              player.direction = serverPlayer.direction;
-            }
-          }
-          else {
-            gameState.addPlayer(serverPlayer.id);
-          }
-        });
-        gameState.players.forEach((player, index, array) => {
-          var serverPlayer = json.value.players.find(serverPlayer => player.id === serverPlayer.id);
-          if (!serverPlayer) array.splice(index, 1);
-          if (player.id === userId) { gameClient.activePlayer = player }
-        })
+        serverUpdateBuffer.queUpdate(json.value)
       }
     } catch (e) {
-      console.log('This doesn\'t look like a valid JSON: ', message.data);
+      console.error('This doesn\'t look like a valid JSON: ', message.data);
       return;
     }
     // handle incoming message
@@ -86,6 +70,7 @@ var GameClient = function () {
     this.updateLoop();
   }
   this.updateLoop = function (t) {
+    serverUpdateBuffer.update(gameState);
     this.dt = ((t - this.lastframetime) / 1000);
     var minDelay = 0.03;
     if (this.dt > minDelay) {
