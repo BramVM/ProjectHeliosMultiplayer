@@ -247,22 +247,22 @@ var CanvasDrawer = function () {
     context.closePath();
     context.fillStyle = "rgba(" + defualtColor.r + ", " + defualtColor.g + ", " + defualtColor.b + ", 1)";
     context.fill();
-    context.strokeStyle = "rgba(0,255,255,1)";
-    context.stroke();
+    // context.strokeStyle = "rgba(0,255,255,1)";
+    // context.stroke();
     context.beginPath();
     context.arc(biomeMid.x, biomeMid.y, biomeSize / 2, 0, 2 * Math.PI, false);
     const biomeGradient = context.createRadialGradient(biomeMid.x, biomeMid.y, 0, biomeMid.x, biomeMid.y, biomeSize / 2);
     biomeGradient.addColorStop(0, "rgba(" + biomeBackgroundColor.r + ", " + biomeBackgroundColor.g + ", " + biomeBackgroundColor.b + ", " + biomeBackgroundColor.a + ")");
     biomeGradient.addColorStop(1, "transparent");
-    context.fillStyle = biomeGradient;
-    context.strokeStyle = "rgba(0,255,255,1)";
+    // context.fillStyle = biomeGradient;
+    // context.strokeStyle = "rgba(0,255,255,1)";
     context.stroke();
     context.fill();
     context.closePath();
     tile.nebulaFields.forEach(nebula => canvasdrawer.drawNebula(nebula));
     tile.stars.forEach(star => { this.drawStar(star); })
     tile.planets.forEach(planet => { this.drawPlanet(planet); })
-    if (tile.biomeReceptors) tile.biomeReceptors.forEach(point => { this.drawBiomePoints(point); })
+    // if (tile.biomeReceptors) tile.biomeReceptors.forEach(point => { this.drawBiomePoints(point); })
   }
   this.drawTiles = (tiles) => {
     var context = canvasdrawer.ctx;

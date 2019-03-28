@@ -39,7 +39,7 @@ class Tile {
     this.planets = this.generatePlanets(tileBiomeAverage, seedString);
     this.nebulaFields = this.generateNebulaFields(tileBiomeAverage, seedString);
     this.stars = this.generateStars(tileBiomeAverage);
-    this.biomeReceptors = this.generateBiomeReceptors();
+    // this.biomeReceptors = this.generateBiomeReceptors();
     canvasDrawer.drawTile(this);
     this.imageData = ctx.getImageData(0, 0, gridSize.x, gridSize.y);
     canvasDrawer.clear();
