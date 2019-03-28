@@ -254,9 +254,9 @@ var CanvasDrawer = function () {
     const biomeGradient = context.createRadialGradient(biomeMid.x, biomeMid.y, 0, biomeMid.x, biomeMid.y, biomeSize / 2);
     biomeGradient.addColorStop(0, "rgba(" + biomeBackgroundColor.r + ", " + biomeBackgroundColor.g + ", " + biomeBackgroundColor.b + ", " + biomeBackgroundColor.a + ")");
     biomeGradient.addColorStop(1, "transparent");
-    // context.fillStyle = biomeGradient;
+    context.fillStyle = biomeGradient;
     // context.strokeStyle = "rgba(0,255,255,1)";
-    context.stroke();
+    // context.stroke();
     context.fill();
     context.closePath();
     tile.nebulaFields.forEach(nebula => canvasdrawer.drawNebula(nebula));
