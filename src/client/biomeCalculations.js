@@ -56,15 +56,17 @@ export function checkBiome(position) {
   const sinA = 0.5 * Math.sin((x - (y + biomeSize / 2)) * frequency);
   const sinB = 0.5 * Math.sin((x + (y + biomeSize / 2)) * frequency);
   const indexOfSinA = Math.floor((x) / (biomeSize))
-  const indexOfSinB = Math.floor((y) / (biomeSize));
-  // const seedstring = "biome" + indexOfSinA + "" +indexOfSinB;
-  // Math.seedrandom(seedstring);
+  const indexOfSinB = Math.floor((y) / (biomeSize))
   const biomeMid = {
     x: indexOfSinA * biomeSize + biomeSize / 2,
     y: indexOfSinB * biomeSize + biomeSize / 2,
   }
+  const seedstring = "biome" + indexOfSinA + "" +indexOfSinB;
+  Math.seedrandom(seedstring);
+  const biomeIndex = 1+ Math.round((Biomes.length-2) * Math.random());
+  Math.seedrandom()
   return {
-    biome: Biomes.find(biome => biome.type === BiomeTypes.TOXIC),
+    biome: Biomes[biomeIndex],
     intensity: Math.abs(sinA + sinB),
     mid: biomeMid,
     size: biomeSize
