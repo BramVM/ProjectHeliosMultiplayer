@@ -50,19 +50,12 @@ export function clear() {
   context.beginPath();
   context.closePath();
 }
-export function initOffscreenCanvas(canvas) {
-  // this.viewWidth = canvas.width = canvas.clientWidth;
-  // this.viewHeight = canvas.height = canvas.clientHeight;
-  this.ctx = canvas.getContext('2d');
-  this.ctx.scale(this.patternScaleX, this.patternScaleY);
-}
 export function initCanvas(canvasElement) {
   canvas = canvasElement
   if (canvas.clientWidth) {canvas.width = canvas.clientWidth;}
   if (canvas.clientHeight) {canvas.height = canvas.clientHeight;}
   context = canvas.getContext('2d');
 }
-
 export function setPerspective(x, y) {
   perspective = {
     x: x - canvas.width / 2,

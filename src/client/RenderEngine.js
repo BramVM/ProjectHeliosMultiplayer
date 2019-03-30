@@ -21,9 +21,11 @@ export function render (activePlayer, gameState, grid){
     setPerspective(activePlayer.position.x, activePlayer.position.y);
   }
   drawTiles(grid.tiles);
-  const biome = checkBiome(activePlayer.position);
-  Math.seedrandom(biome.mid.x + "rotation" + biome.mid.y);
-  drawRainbow(5000,biome.intensity, Math.random()*Math.PI*2)
+  if (activePlayer){
+    const biome = checkBiome(activePlayer.position);
+    Math.seedrandom(biome.mid.x + "rotation" + biome.mid.y);
+    drawRainbow(5000,biome.intensity, Math.random()*Math.PI*2)
+  }
   if (activePlayer) {
     drawDarkness(1 - getBiomeLight(activePlayer.position).value, gameState.players);
   }
