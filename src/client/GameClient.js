@@ -1,17 +1,12 @@
-
 import { Actions } from '../shared/constants'
 import InputInterface from './InputInterface'
 import GameState from '../shared/GameState'
-import CanvasDrawer from './CanvasDrawer'
-import Grid from './Grid'
+import {initCanvas} from './CanvasDrawer'
+import {render} from './RenderEngine'
 import ServerUpdateBuffer from './ServerUpdateBuffer'
-import {
-  getBiomeLight
-} from './biomeCalculations'
-
+import Grid from './Grid'
 
 const inputInterface = new InputInterface();
-const canvasDrawer = new CanvasDrawer();
 const gameState = new GameState();
 const grid = new Grid();
 const serverUpdateBuffer = new ServerUpdateBuffer();
@@ -38,8 +33,6 @@ var GameClient = function () {
     // an error occurred when sending/receiving data
   };
   connection.onmessage = function (message) {
-    // try to decode json (I assume that each message
-    // from server is json)
     try {
       var json = JSON.parse(message.data);
       if (json.action === Actions.UPDATE_PACKAGE && json.value) {
@@ -49,14 +42,12 @@ var GameClient = function () {
       console.error('This doesn\'t look like a valid JSON: ', message.data);
       return;
     }
-    // handle incoming message
   };
 
-  this.initGameCanvas = (canvas => {
-    canvasDrawer.initCanvas(canvas);
+  this.initGameCanvas = (canvasElement => {
+    initCanvas(canvasElement);
   })
   this.start = () => {
-    canvasDrawer.gameState = gameState;
     inputInterface.onDirectionChange = () => {
       connection.send(JSON.stringify({ action: Actions.DIRECTION_CHANGE, value: inputInterface.direction, userId }));
       gameState.setPlayerDirection(userId, inputInterface.direction);
@@ -76,19 +67,7 @@ var GameClient = function () {
     if (this.dt > minDelay) {
       this.lastframetime = t;
       gameState.update(this.dt);
-      if (gameClient.activePlayer) {
-        grid.update(gameClient.activePlayer.position)
-      }
-      canvasDrawer.clear();
-      if (gameClient.activePlayer) {
-        canvasDrawer.setPerspective(gameClient.activePlayer.position.x, gameClient.activePlayer.position.y);
-      }
-      canvasDrawer.drawTiles(grid.tiles);
-      if (gameClient.activePlayer) {
-        canvasDrawer.drawDarkness(1 - getBiomeLight(gameClient.activePlayer.position).value);
-      }
-
-      canvasDrawer.drawPlayers();
+      render(gameClient.activePlayer, gameState, grid)
     }
     this.updateid = window.requestAnimationFrame(this.updateLoop.bind(this), this.viewport);
   }

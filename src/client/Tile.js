@@ -10,17 +10,16 @@ import {
 } from './biomeCalculations'
 import seedrandom from 'seedrandom'
 import { seedrandomBetween } from '../shared/helperFunctions'
-
+import {initCanvas, drawTile, clear} from './CanvasDrawer'
 const gridSize = {
   y: 1000,
   x: 1000
 }
-const canvasDrawer = new CanvasDrawer();
 const tileCanvas = new OffscreenCanvas(gridSize.x, gridSize.y)
 const ctx = tileCanvas.getContext('2d');
 class Tile {
   constructor(gridIndex) {
-    canvasDrawer.initOffscreenCanvas(tileCanvas);
+    initCanvas(tileCanvas);
     this.gridIndex = gridIndex
     this.size = gridSize;
     this.id = String(this.gridIndex.x) + String(this.gridIndex.y);
@@ -40,9 +39,9 @@ class Tile {
     this.nebulaFields = this.generateNebulaFields(tileBiomeAverage, seedString);
     this.stars = this.generateStars(tileBiomeAverage);
     // this.biomeReceptors = this.generateBiomeReceptors();
-    canvasDrawer.drawTile(this);
+    drawTile(this);
     this.imageData = ctx.getImageData(0, 0, gridSize.x, gridSize.y);
-    canvasDrawer.clear();
+    clear();
   }
 
   generatePlanets(tileBiomeAverage, seedString) {
@@ -122,7 +121,6 @@ class Tile {
   }
 
   generateBiomeReceptors() {
-
     const points = [];
     const width = gridSize.x;
     const height = gridSize.y;
