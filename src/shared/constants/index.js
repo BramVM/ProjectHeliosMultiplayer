@@ -9,7 +9,7 @@ export const BiomeTypes = {
   DEFAULT: 'DEFAULT',
   TOXIC: 'TOXIC',
   ICED: 'ICED',
-  HOT: 'HOT'
+  CHAOS: 'CHAOS'
 };
 
 export const Biomes = [
@@ -221,7 +221,7 @@ export const Biomes = [
     }
   },
   {
-    type: BiomeTypes.HOT,
+    type: BiomeTypes.CHAOS,
     backgroundColor: {
       r: 0,
       g: 0,
@@ -237,20 +237,20 @@ export const Biomes = [
       minSizeFactor: 0.3,
       maxSizeFactor: 0.6,
       colorRange: {
-        rMin: 0,
+        rMin: 100,
         rMax: 255,
         gMin: 0,
-        gMax: 255,
-        bMin: 50,
-        bMax: 100,
+        gMax: 0,
+        bMin: 0,
+        bMax: 0,
         aMin: 0,
         aMax: 0.2,
       }
     },
     stars: {
-      densety: 13,
+      densety: 10,
       minSize: 0,
-      maxSize: 20,
+      maxSize: 15,
       colorRange: {
         rMin: 255,
         rMax: 255,
@@ -268,22 +268,22 @@ export const Biomes = [
       minSizeFactor: 0.3,
       maxSizeFactor: 0.6,
       baseColorRange: {
-        rMin: 100,
-        rMax: 100,
-        gMin: 100,
-        gMax: 100,
-        bMin: 100,
-        bMax: 200,
+        rMin: 130,
+        rMax: 200,
+        gMin: 60,
+        gMax: 60,
+        bMin: 60,
+        bMax: 60,
         aMin: 1,
         aMax: 1,
       },
       textureColorRange: {
-        rMin: 40,
-        rMax: 70,
-        gMin: 40,
-        gMax: 40,
-        bMin: 40,
-        bMax: 40,
+        rMin: 20,
+        rMax: 80,
+        gMin: 20,
+        gMax: 80,
+        bMin: 20,
+        bMax: 80,
         aMin: 1,
         aMax: 1,
       }
