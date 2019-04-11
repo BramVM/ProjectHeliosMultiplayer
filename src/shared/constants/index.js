@@ -278,8 +278,8 @@ export const Biomes = [
         aMax: 1,
       },
       textureColorRange: {
-        rMin: 20,
-        rMax: 80,
+        rMin: 100,
+        rMax: 130,
         gMin: 20,
         gMax: 80,
         bMin: 20,

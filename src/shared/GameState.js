@@ -27,9 +27,12 @@ var GameState = function () {
   this.update = (dt) => {
     gameState.players.forEach((player) => {
       const wantedAngle = player.direction * Math.PI / 4
+      player.power.value = player.power.value - 0.01 * dt;
       if (player.movement) {
+        player.power.value = player.power.value - 0.2 * dt;
         player.force = addVectors([player.force, new Vector(wantedAngle, player.acceleration * dt)]);
       }
+      if (player.power.value < 0) player.power.value = 0;
       player.rotation = player.force.angle;
       // apply drag
       player.force = addVectors([player.force, new Vector(player.force.angle + Math.PI, player.force.magnitude * 0.9 * dt)]);

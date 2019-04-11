@@ -5,46 +5,46 @@ import { Biomes, BiomeTypes } from '../shared/constants'
 let canvas = null;
 let context = null;
 let perspective = { x: 0, y: 0 }
-    // this.drawRandomShape = function(context,position, size){
-    // 	var minDistance = size/5;
-    // 	var numberOfPoints = 6
-    // 	context.beginPath();
-    // 	Math.seedrandom(""+String(position.x) + String(position.y));
-    // 	for (var i = 0; i < numberOfPoints; i++) {
-    // 		if(i!=0){
-    // 			bezierpoint1 = new this.classes.cord(prevPoint.x, prevPoint.y);
-    // 			bezierpoint1.moveByDistanceAndAngle(prevOffset/2,prevAngle+Math.PI/2);
-    // 		}
+// this.drawRandomShape = function(context,position, size){
+// 	var minDistance = size/5;
+// 	var numberOfPoints = 6
+// 	context.beginPath();
+// 	Math.seedrandom(""+String(position.x) + String(position.y));
+// 	for (var i = 0; i < numberOfPoints; i++) {
+// 		if(i!=0){
+// 			bezierpoint1 = new this.classes.cord(prevPoint.x, prevPoint.y);
+// 			bezierpoint1.moveByDistanceAndAngle(prevOffset/2,prevAngle+Math.PI/2);
+// 		}
 
-    // 		calculatedPosition = new this.classes.cord(position.x, position.y);
-    // 		prevAngle = Math.PI*2/numberOfPoints*i;
-    // 		prevOffset = minDistance + Math.random()*(size-minDistance);
-    // 		calculatedPosition.moveByDistanceAndAngle(prevOffset,Math.PI*2/numberOfPoints*i);
-    // 		Math.seedrandom(""+String(calculatedPosition.x) + String(calculatedPosition.y));
-    // 		if(i===0){
-    // 			context.moveTo(calculatedPosition.x, calculatedPosition.y);
-    // 			firstpoint = calculatedPosition;
-    // 			firstAngle= prevAngle;
-    // 			firstOffset= prevOffset;
-    // 		}
-    // 		else{
-    // 			bezierpoint2 = new this.classes.cord(calculatedPosition.x, calculatedPosition.y);
-    // 			bezierpoint2.moveByDistanceAndAngle(prevOffset/2,prevAngle-Math.PI/2);
-    // 			context.bezierCurveTo(bezierpoint1.x, bezierpoint1.y, bezierpoint2.x, bezierpoint2.y, calculatedPosition.x, calculatedPosition.y);
-    // 		}
-    // 		prevPoint = calculatedPosition;
-    // 	}
-    // 	bezierpoint1 = new this.classes.cord(calculatedPosition.x, calculatedPosition.y);
-    // 	bezierpoint1.moveByDistanceAndAngle(prevOffset/2,prevAngle+Math.PI/2);
-    // 	bezierpoint2 = new this.classes.cord(firstpoint.x, firstpoint.y);
-    // 	bezierpoint2.moveByDistanceAndAngle(firstOffset/2,firstAngle-Math.PI/2);
-    // 	context.bezierCurveTo(bezierpoint1.x, bezierpoint1.y, bezierpoint2.x, bezierpoint2.y, firstpoint.x, firstpoint.y);
-    // 	Math.seedrandom();
-    // 	context.fillStyle = "rgba(0, 0, 0, 0.4)";
-    // 	context.fill();
-    // 	context.closePath();
+// 		calculatedPosition = new this.classes.cord(position.x, position.y);
+// 		prevAngle = Math.PI*2/numberOfPoints*i;
+// 		prevOffset = minDistance + Math.random()*(size-minDistance);
+// 		calculatedPosition.moveByDistanceAndAngle(prevOffset,Math.PI*2/numberOfPoints*i);
+// 		Math.seedrandom(""+String(calculatedPosition.x) + String(calculatedPosition.y));
+// 		if(i===0){
+// 			context.moveTo(calculatedPosition.x, calculatedPosition.y);
+// 			firstpoint = calculatedPosition;
+// 			firstAngle= prevAngle;
+// 			firstOffset= prevOffset;
+// 		}
+// 		else{
+// 			bezierpoint2 = new this.classes.cord(calculatedPosition.x, calculatedPosition.y);
+// 			bezierpoint2.moveByDistanceAndAngle(prevOffset/2,prevAngle-Math.PI/2);
+// 			context.bezierCurveTo(bezierpoint1.x, bezierpoint1.y, bezierpoint2.x, bezierpoint2.y, calculatedPosition.x, calculatedPosition.y);
+// 		}
+// 		prevPoint = calculatedPosition;
+// 	}
+// 	bezierpoint1 = new this.classes.cord(calculatedPosition.x, calculatedPosition.y);
+// 	bezierpoint1.moveByDistanceAndAngle(prevOffset/2,prevAngle+Math.PI/2);
+// 	bezierpoint2 = new this.classes.cord(firstpoint.x, firstpoint.y);
+// 	bezierpoint2.moveByDistanceAndAngle(firstOffset/2,firstAngle-Math.PI/2);
+// 	context.bezierCurveTo(bezierpoint1.x, bezierpoint1.y, bezierpoint2.x, bezierpoint2.y, firstpoint.x, firstpoint.y);
+// 	Math.seedrandom();
+// 	context.fillStyle = "rgba(0, 0, 0, 0.4)";
+// 	context.fill();
+// 	context.closePath();
 
-    // }
+// }
 export function clear() {
   context.clearRect(0, 0, context.canvas.width, context.canvas.height);
   context.beginPath();
@@ -52,8 +52,8 @@ export function clear() {
 }
 export function initCanvas(canvasElement) {
   canvas = canvasElement
-  if (canvas.clientWidth) {canvas.width = canvas.clientWidth;}
-  if (canvas.clientHeight) {canvas.height = canvas.clientHeight;}
+  if (canvas.clientWidth) { canvas.width = canvas.clientWidth; }
+  if (canvas.clientHeight) { canvas.height = canvas.clientHeight; }
   context = canvas.getContext('2d');
 }
 export function setPerspective(x, y) {
@@ -453,5 +453,38 @@ export function drawRainbow(size, intensity, rotation) {
   context.fillStyle = _ring;
   context.fill();
   context.closePath();
+  context.restore()
+}
+export function drawPowerGuage(actual, max) {
+  context.save()
+  context.shadowBlur = 15;
+  context.shadowColor = "rgba(200, 230, 255, " + 1 + ")";
+  context.strokeStyle = "rgba(200, 230, 255, " + 1 + ")";
+  context.fillStyle = "rgba(200, 230, 255, " + 1 + ")";
+  context.translate(100, context.canvas.height - 100)
+  context.translate(0, -45)
+  context.beginPath();
+  context.moveTo(2, 0);
+  context.lineTo(2, 16);
+  context.lineTo(10, 16);
+  context.lineTo(-2, 45);
+  context.lineTo(-2, 24);
+  context.lineTo(-10, 24);
+  context.closePath();
+  context.fill();
+  context.translate(0, 45)
+  context.font = "30px Arial, Helvetica, sans-serif";
+  context.textAlign = "center";
+  context.fillText(Math.ceil(actual * 10), 0, 40);
+  context.beginPath();
+  context.arc(0, 0, 75, 0, 2 * Math.PI, false);
+  context.closePath();
+  context.lineWidth = 4
+  context.stroke();
+  context.beginPath();
+  context.rotate(-Math.PI / 2)
+  context.arc(0, 0, 82, 0, 2 * Math.PI * actual / max, false);
+  context.lineWidth = 15
+  context.stroke();
   context.restore()
 }

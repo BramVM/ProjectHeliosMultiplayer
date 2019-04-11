@@ -15,13 +15,17 @@ class Player {
     this.direction = 0;
     this.movement = false;
     this.rotation = 0;
-    this.acceleration = 300;
+    this.acceleration = 900;
     this.speed = 0;
     this.topSpeed = 150;
     this.position = new Cord();
     this.trail = [];
     this.poweringUp = 0;
     this.force = new Vector();
+    this.power = {
+      capacity: 10,
+      value: 10,
+    }
     this.headlight = new spotLight(1, Math.PI / 3, 500, true);
   }
 }
