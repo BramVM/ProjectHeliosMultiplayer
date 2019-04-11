@@ -10,12 +10,14 @@ export default class ServerUpdateBuffer {
     this.deltaPackage = { players: [] };
     this.intrapolationIndex = 0;
   }
-  instantUpdates(gameState) {
+  instantUpdates(userId, gameState) {
     this.updatePackage.players.forEach((serverPlayer) => {
       var player = gameState.players.find(player => player.id === serverPlayer.id);
       if (player) {
-        player.movement = serverPlayer.movement;
-        player.direction = serverPlayer.direction;
+        if ( userId !== player.id ){
+          player.movement = serverPlayer.movement;
+          player.direction = serverPlayer.direction;
+        }
         player.force = serverPlayer.force;
       }
     })
@@ -45,19 +47,21 @@ export default class ServerUpdateBuffer {
       if (!player) gameState.addPlayer(serverPlayer.id);
     });
   }
-  removeExcessivePlayers(gameState) {
+  removeExcessivePlayers(userId, gameState) {
     gameState.players.forEach((player, index, array) => {
-      var serverPlayer = this.updatePackage.players.find(serverPlayer => player.id === serverPlayer.id);
-      if (!serverPlayer) array.splice(index, 1);
+      if (player.id !== userId) {
+        var serverPlayer = this.updatePackage.players.find(serverPlayer => player.id === serverPlayer.id);
+        if (!serverPlayer) array.splice(index, 1);
+      }
     });
   }
-  update(gameState) {
+  update(userId, gameState) {
     if (this.updatePackage) {
       if (this.intrapolationIndex === 0) {
         this.createDeltaPackage(gameState);
         this.addMissingPlayers(gameState);
-        this.removeExcessivePlayers(gameState);
-        this.instantUpdates(gameState)
+        this.removeExcessivePlayers(userId, gameState);
+        this.instantUpdates(userId, gameState)
       }
       this.intrapolationIndex++;
       gameState.players.forEach((player) => {

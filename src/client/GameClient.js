@@ -1,8 +1,8 @@
 import { Actions } from '../shared/constants'
 import InputInterface from './InputInterface'
 import GameState from '../shared/GameState'
-import {initCanvas} from './CanvasDrawer'
-import {render} from './RenderEngine'
+import { initCanvas } from './CanvasDrawer'
+import { render } from './RenderEngine'
 import ServerUpdateBuffer from './ServerUpdateBuffer'
 import Grid from './Grid'
 
@@ -61,7 +61,7 @@ var GameClient = function () {
     this.updateLoop();
   }
   this.updateLoop = function (t) {
-    serverUpdateBuffer.update(gameState);
+    serverUpdateBuffer.update(userId, gameState);
     this.dt = ((t - this.lastframetime) / 1000);
     var minDelay = 0.03;
     if (this.dt > minDelay) {
