@@ -9,7 +9,8 @@ import {
   drawTiles,
   drawRainbow,
   drawDarkness,
-  drawPowerGuage
+  drawPowerGuage,
+  drawVirtualFace
 } from './CanvasDrawer'
 import seedrandom from 'seedrandom'
 
@@ -36,4 +37,5 @@ export function render(activePlayer, gameState, grid) {
   if (activePlayer) {
     drawPowerGuage(activePlayer.power.value, activePlayer.power.capacity)
   }
+  drawVirtualFace();
 }

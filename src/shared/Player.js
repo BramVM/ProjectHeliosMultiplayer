@@ -16,8 +16,6 @@ class Player {
     this.movement = false;
     this.rotation = 0;
     this.acceleration = 300;
-    this.speed = 0;
-    this.topSpeed = 150;
     this.position = new Cord();
     this.trail = [];
     this.poweringUp = 0;
