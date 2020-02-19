@@ -1,4 +1,3 @@
-
 export default class InputInterface {
   constructor() {
     var self = this;
@@ -16,6 +15,7 @@ export default class InputInterface {
       document.addEventListener('keyup', this.onKeyUp, false);
       document.addEventListener('movementChange', this.onMovementChange, false);
       document.addEventListener('directionChange', this.onDirectionChange, false);
+      document.addEventListener('enter', this.onEnter, false);
     };
 
     this.onKeyDown = function (event) {
@@ -37,7 +37,7 @@ export default class InputInterface {
           self.arrows.right = true;
           break;
         case 32: // space
-
+          document.dispatchEvent(new Event('enter'));
           break;
       }
       self.updateMovement();

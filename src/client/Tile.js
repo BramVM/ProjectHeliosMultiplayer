@@ -10,7 +10,7 @@ import {
 } from './biomeCalculations'
 import seedrandom from 'seedrandom'
 import { seedrandomBetween } from '../shared/helperFunctions'
-import {initCanvas, drawTile, clear} from './CanvasDrawer'
+import { initCanvas, drawTile, clear } from './CanvasDrawer'
 const gridSize = {
   y: 1000,
   x: 1000

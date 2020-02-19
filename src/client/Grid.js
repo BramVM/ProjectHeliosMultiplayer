@@ -4,10 +4,17 @@ const tileWorker = new TileWorker();
 
 var Grid = function () {
   const grid = this;
-  this.size = {
+  this.tiles = [];
+  this.tileSize = {
     x: 1000,
     y: 1000
   };
+  this.size = {
+    x: 5,
+    y: 5
+  }
+  this.rendering = true;
+
   tileWorker.onmessage = function (event) {
     var message = event.data
     switch (message.type) {
@@ -16,26 +23,25 @@ var Grid = function () {
         break;
     }
   };
-  this.tiles = []
   this.focus = undefined
   this.checkNearestTile = function (position) {
     var gridIndex = {
-      x: Math.round(position.x / this.size.x),
-      y: Math.round(-position.y / this.size.y)
+      x: Math.round(position.x / this.tileSize.x),
+      y: Math.round(-position.y / this.tileSize.y)
     }
     var result = {
       id: String(gridIndex.x) + String(gridIndex.y),
       gridIndex,
       position: {
-        x: this.size.x * gridIndex.x,
-        y: this.size.y * gridIndex.y
+        x: this.tileSize.x * gridIndex.x,
+        y: this.tileSize.y * gridIndex.y
       }
     }
     return result;
   };
   this.excessiveTilesfilter = (tile, nearestTile) => {
-    for (var x = -2; x < 3; x++) {
-      for (var y = -2; y < 3; y++) {
+    for (var x = -Math.floor(this.size.x/2); x < Math.ceil(this.size.x/2); x++) {
+      for (var y = -Math.floor(this.size.y/2); y < Math.ceil(this.size.y/2); y++) {
         if (tile.gridIndex.x === nearestTile.gridIndex.x + x && tile.gridIndex.y === nearestTile.gridIndex.y + y) return true;
       }
     }
@@ -43,8 +49,8 @@ var Grid = function () {
   }
   this.findMissingTiles = (tiles, nearestTile) => {
     var missingTiles = []
-    for (var x = -2; x < 3; x++) {
-      for (var y = -2; y < 3; y++) {
+    for (var x = -Math.floor(this.size.x/2); x < Math.ceil(this.size.x/2); x++) {
+      for (var y = -Math.floor(this.size.y/2); y < Math.ceil(this.size.y/2); y++) {
         var tileFound = tiles.find(tile => tile.gridIndex.x === nearestTile.gridIndex.x + x && tile.gridIndex.y === nearestTile.gridIndex.y + y)
         if (!tileFound) missingTiles.push({ x: nearestTile.gridIndex.x + x, y: nearestTile.gridIndex.y + y })
       }
@@ -59,6 +65,7 @@ var Grid = function () {
       const missingTiles = this.findMissingTiles(this.tiles, nearestTile)
       missingTiles.forEach(gridIndex => { tileWorker.postMessage({ type: "request_tile", gridIndex }); })
     }
+    grid.rendering = !(grid.tiles.length === grid.size.x * grid.size.y);
   }
 }
 export default Grid

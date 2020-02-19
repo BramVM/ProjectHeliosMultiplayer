@@ -1,14 +1,10 @@
 import Player from './Player'
-import Vector from '../shared/Vector'
 import Cord from '../shared/Cord'
 
 function addVectors(vectors) {
-  let result = new Vector();
+  let result = new Cord();
   vectors.forEach(vector => {
-    const head = new Cord(0, 0)
-    head.moveByDistanceAndAngle(result.magnitude, result.angle);
-    head.moveByDistanceAndAngle(vector.magnitude, vector.angle);
-    result = new Vector(head.angleToPoint({ x: 0, y: 0 }), head.distanceToPoint({ x: 0, y: 0 }))
+    result.moveByVector(vector);
   })
   return result
 }
@@ -30,16 +26,20 @@ var GameState = function () {
       player.power.value = player.power.value - 0.01 * dt;
       if (player.movement) {
         player.power.value = player.power.value - 0.2 * dt;
-        player.force = addVectors([player.force, new Vector(wantedAngle, player.acceleration * dt)]);
+        var acceleration = new Cord().moveByDistanceAndAngle(player.acceleration * dt, wantedAngle);
+        player.velocity = player.velocity.moveByVector(acceleration);
       }
       if (player.power.value < 0) player.power.value = 0;
-      player.rotation = player.force.angle;
+      player.rotation = player.velocity.angleToPoint({ x: 0, y: 0 });
+      player.rotation = player.rotation?player.rotation:0;
       // apply drag
-      player.force = addVectors([player.force, new Vector(player.force.angle + Math.PI, player.force.magnitude * 0.9 * dt)]);
+      player.velocity = addVectors([player.velocity, new Cord(-player.velocity.x * 0.9 * dt, -player.velocity.y * 0.9 * dt)])
       // apply vector to position
       const positon = new Cord(player.position.x, player.position.y);
-      positon.moveByDistanceAndAngle(player.force.magnitude * dt, player.force.angle);
+      const positionOffset = new Cord(player.velocity.x * dt, player.velocity.y * dt);
+      positon.moveByVector(positionOffset);
       player.position = positon;
+      player.totalFlightDistance = player.totalFlightDistance + positionOffset.distanceToPoint({x:0,y:0});
       //trail
       if (player.movement) {
         player.trail.push(player.position);
