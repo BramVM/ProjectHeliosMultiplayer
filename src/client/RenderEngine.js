@@ -10,11 +10,14 @@ import {
   drawRainbow,
   drawDarkness,
   drawPowerGuage,
-  drawBeacon
+  drawBeacon,
+  drawStation
 } from './CanvasDrawer'
 import {
   textConsole
 } from './TextConsole'
+
+import { stations } from '../shared/stationMoc'
 
 function powerUpLightAnimation(powerUpProgress) {
   var accelerator = 0;
@@ -25,7 +28,17 @@ function powerUpLightAnimation(powerUpProgress) {
   return lightIntensity;
 }
 
+var frame = 0;
+
+function brokenLightAnimation() {
+  var lightIntensity = (1 + Math.sin(frame / 10)) / 2;
+  if (lightIntensity < 0.9) lightIntensity = 0.1;
+  if (lightIntensity > 0.9) lightIntensity = lightIntensity * Math.random();
+  return lightIntensity;
+}
+
 export function render(activePlayer, gameState, grid) {
+  frame++;
   var lightPower = powerUpLightAnimation(activePlayer.poweringUp);
   var activePlayerToRender = {
     ...activePlayer,
@@ -52,14 +65,17 @@ export function render(activePlayer, gameState, grid) {
   }
   if (activePlayerToRender) {
     drawDarkness(1 - getBiomeLight(activePlayerToRender.position).value, playersToRender);
-    activePlayerToRender.beacons.forEach((beacon) => {
-      drawBeacon(beacon, activePlayer.rotation);
-    })
   }
+  stations.forEach((station) => {
+    drawStation(station, brokenLightAnimation());
+  })
   playersToRender.forEach((player) => {
     drawPlayer(player);
   })
   if (activePlayerToRender) {
+    activePlayerToRender.beacons.forEach((beacon) => {
+      drawBeacon(beacon, activePlayer.rotation);
+    })
     drawPowerGuage(activePlayerToRender.power.value, activePlayerToRender.power.capacity, activePlayerToRender.lightPower)
     if (activePlayerToRender.poweringUp > 100) textConsole.hold(false);
     textConsole.render(activePlayerToRender.lightPower);

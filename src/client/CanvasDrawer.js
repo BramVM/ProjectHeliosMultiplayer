@@ -915,7 +915,7 @@ export function drawConsole(text, wordIndex, intensity, showMore, avatar, blink)
     drawVirtualFace(intensity)
     context.translate(-marginLeft, -marginTop)
     marginLeft = marginLeft + 80
-    maxLineWidth = maxLineWidth -110;
+    maxLineWidth = maxLineWidth - 110;
   }
   if (showMore && blink) {
     context.beginPath();
@@ -1001,4 +1001,130 @@ export function drawBeacon(beacon, playerDirection) {
   context.closePath();
   context.stroke();
   context.restore();
+}
+export function drawStation(station, lightAnimation) {
+  context.save();
+  context.translate(station.position.x - perspective.x, station.position.y - perspective.y);
+  var tileSize = 40;
+  var tileOffsetX = Math.sin(Math.PI / 3) * tileSize * 2;
+  var tileOffsetY = tileSize + Math.cos(Math.PI / 3) * tileSize;
+  var lightIntensity = station.broken?lightAnimation:1;
+  station.tiles.forEach((tile) => {
+    context.translate(tileOffsetX * tile.x, tileOffsetY * tile.y);
+    if(tile.y%2 !== 0) context.translate(tileOffsetX/2,0);
+    drawBase(tileSize, lightIntensity);
+    if(tile.y%2 !== 0) context.translate(-tileOffsetX/2,0);
+    context.translate(-tileOffsetX * tile.x, -tileOffsetY * tile.y);
+  })
+  context.restore();
+}
+
+function drawBase(s,lightIntensity) {
+  var o = Math.sin(Math.PI / 3) * s
+  var a = Math.cos(Math.PI / 3) * s
+  context.save()
+  context.fillStyle = "rgba(0, 0, 0, " + 1 + ")";
+  context.strokeStyle = "rgba(200, 230, 255, " + 1 + ")";
+  context.beginPath();
+  context.moveTo(0, s);
+  context.lineTo(o, s - a);
+  context.lineTo(o, -s + a);
+  context.lineTo(0, -s);
+  context.lineTo(-o, -s + a);
+  context.lineTo(-o, s - a);
+  context.lineTo(0, s);
+  context.closePath();
+  context.stroke();
+  context.fill();
+  context.strokeStyle = "rgba(200, 230, 255, " + lightIntensity + ")";
+  context.shadowColor = "rgba(200, 230, 255, " + lightIntensity + ")";
+  context.shadowBlur = 5;
+  context.lineWidth = 4;
+  s = s * 0.6
+  o = Math.sin(Math.PI / 3) * s
+  a = Math.cos(Math.PI / 3) * s
+  context.beginPath();
+  context.moveTo(0, s);
+  context.lineTo(o, s - a);
+  context.lineTo(o, -s + a);
+  context.lineTo(0, -s);
+  context.lineTo(-o, -s + a);
+  context.lineTo(-o, s - a);
+  context.lineTo(0, s);
+  context.closePath();
+  context.stroke();
+  context.fill();
+  s = s * 0.6;
+  drawSolarIcon(s);
+  // drawBatteryIcon(s);
+  // drawShieldIcon(s);
+  context.restore();
+}
+
+function drawSolarIcon(s) {
+  var o = Math.sin(Math.PI / 3) * s
+  var a = Math.cos(Math.PI / 3) * s
+  context.lineWidth = 2;
+  context.beginPath();
+  context.moveTo(0, s);
+  context.lineTo(0, -s);
+  context.closePath();
+  context.stroke();
+  context.beginPath();
+  context.moveTo(o, 0);
+  context.lineTo(-o, 0);
+  context.closePath();
+  context.stroke();
+  context.beginPath();
+  context.moveTo(o, s - a);
+  context.lineTo(o, a - s);
+  context.closePath();
+  context.stroke();
+  context.beginPath();
+  context.moveTo(-o, s - a);
+  context.lineTo(-o, a - s);
+  context.closePath();
+  context.stroke();
+}
+
+function drawBatteryIcon(s) {
+  var o = Math.sin(Math.PI / 3) * s
+  var a = Math.cos(Math.PI / 3) * s
+  context.lineWidth = 2;
+  context.beginPath();
+  context.moveTo(0, s);
+  context.lineTo(o, s - a);
+  context.lineTo(-o, s - a);
+  context.lineTo(0, s);
+  context.closePath();
+  context.stroke();
+  context.beginPath();
+  context.moveTo(-o, s - a - 4.5);
+  context.lineTo(o, s - a - 4.5);
+  context.lineTo(o, a - s + 4.5);
+  context.lineTo(-o, a - s + 4.5);
+  context.lineTo(-o, s - a - 4.5);
+  context.closePath();
+  context.stroke();
+  context.beginPath();
+  context.moveTo(0, -s);
+  context.lineTo(o, a - s);
+  context.lineTo(-o, a - s);
+  context.lineTo(0, -s);
+  context.closePath();
+  context.stroke();
+}
+function drawShieldIcon(s) {
+  var o = Math.sin(Math.PI / 3) * s
+  var a = Math.cos(Math.PI / 3) * s
+  context.lineWidth = 2;
+  context.beginPath();
+  context.moveTo(-o + 3, s - a - 2);
+  context.lineTo(0, s - 2);
+  context.lineTo(o - 3, s - a - 2);
+  context.lineTo(o - 3, a - s - 2);
+  context.lineTo(-o + 3, a - s - 2);
+  context.lineTo(-o + 3, s - a - 2);
+  context.closePath();
+  context.stroke();
 }
