@@ -27,7 +27,8 @@
   "dependencies": {
     "dotenv-webpack": "^1.7.0",
     "seedrandom": "^2.4.4",
-    "websocket": "^1.0.28"
+    "websocket": "^1.0.28",
+    "query-string": "^5.1.1"
   },
   "heroku-run-build-script": true
 }

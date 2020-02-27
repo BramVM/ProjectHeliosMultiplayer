@@ -11,6 +11,7 @@ var config = {
     },
     plugins:[
       new CleanWebpackPlugin(['dist']),
+      new Dotenv()
     ],
     output: {
         path: __dirname+'/dist/',
@@ -33,7 +34,10 @@ if(process && process.env){
   config.plugins.push(new webpack.DefinePlugin({
     'process.env': {
       WEBSOCKET_URL: JSON.stringify(process.env.WEBSOCKET_URL),
-      PORT: JSON.stringify(process.env.PORT)
+      PORT: JSON.stringify(process.env.PORT),
+      IDENTITY_URL: JSON.stringify(process.env.IDENTITY_URL),
+      CLIENT_ID: JSON.stringify(process.env.CLIENT_ID),
+      CALLBACK_URL: JSON.stringify(process.env.CALLBACK_URL)
     }
   }))
 }
