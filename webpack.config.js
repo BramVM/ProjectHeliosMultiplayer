@@ -37,7 +37,8 @@ if(process && process.env){
       PORT: JSON.stringify(process.env.PORT),
       IDENTITY_URL: JSON.stringify(process.env.IDENTITY_URL),
       CLIENT_ID: JSON.stringify(process.env.CLIENT_ID),
-      CALLBACK_URL: JSON.stringify(process.env.CALLBACK_URL)
+      CALLBACK_URL: JSON.stringify(process.env.CALLBACK_URL),
+      API_URL: JSON.stringify(process.env.API_URL)
     }
   }))
 }
