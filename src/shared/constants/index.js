@@ -1,7 +1,14 @@
+export const StationTileTypes = {
+  ACCESS: 'ACCESS',
+  POWER_GENERATOR: 'POWER GENERATOR',
+  POWER_CAPACITY: 'POWER CAPACITY',
+};
+
 export const Actions = {
   CONNECTION: 'CONNECTION',
   DIRECTION_CHANGE: 'DIRECTION CHANGE',
   MOVEMENT_CHANGE: 'MOVEMENT CHANGE',
+  STORY_STEP_CHANGE: 'STORY STEP CHANGE',
   UPDATE_PACKAGE: 'UPDATE PACKAGE'
 };
 
@@ -83,7 +90,7 @@ export const Biomes = [
     }
   },
   {
-    type: BiomeTypes.TOXIC,
+    type: BiomeTypes.ICED,
     backgroundColor: {
       r: 30,
       g: 30,
@@ -152,7 +159,7 @@ export const Biomes = [
     }
   },
   {
-    type: BiomeTypes.ICED,
+    type: BiomeTypes.TOXIC,
     backgroundColor: {
       r: 10,
       g: 50,
@@ -160,7 +167,7 @@ export const Biomes = [
       a: 1
     },
     light: {
-      value: 1
+      value: 0
     },
     nebula: {
       minNumberOfFields: 2,

@@ -12,9 +12,9 @@ export default class ServerUpdateBuffer {
   }
   instantUpdates(userId, gameState) {
     this.updatePackage.players.forEach((serverPlayer) => {
-      var player = gameState.players.find(player => player.id === serverPlayer.id);
+      var player = gameState.players.find(player => player._id === serverPlayer._id);
       if (player) {
-        if ( userId !== player.id ){
+        if ( userId !== player._id ){
           player.movement = serverPlayer.movement;
           player.direction = serverPlayer.direction;
         }
@@ -25,10 +25,10 @@ export default class ServerUpdateBuffer {
   createDeltaPackage(gameState) {
     this.deltaPackage = { players: [] };
     this.updatePackage.players.forEach((serverPlayer) => {
-      var player = gameState.players.find(player => player.id === serverPlayer.id);
+      var player = gameState.players.find(player => player._id === serverPlayer._id);
       if (player) {
         this.deltaPackage.players.push({
-          id: serverPlayer.id,
+          _id: serverPlayer._id,
           position: {
             x: (serverPlayer.position.x - player.position.x) / this.framesForIntrapolation,
             y: (serverPlayer.position.y - player.position.y) / this.framesForIntrapolation
@@ -43,14 +43,14 @@ export default class ServerUpdateBuffer {
   }
   addMissingPlayers(gameState) {
     this.updatePackage.players.forEach(serverPlayer => {
-      var player = gameState.players.find(player => player.id === serverPlayer.id);
-      if (!player) gameState.addPlayer(serverPlayer.id);
+      var player = gameState.players.find(player => player._id === serverPlayer._id);
+      if (!player) gameState.addPlayer(serverPlayer);
     });
   }
   removeExcessivePlayers(userId, gameState) {
     gameState.players.forEach((player, index, array) => {
-      if (player.id !== userId) {
-        var serverPlayer = this.updatePackage.players.find(serverPlayer => player.id === serverPlayer.id);
+      if (player._id !== userId) {
+        var serverPlayer = this.updatePackage.players.find(serverPlayer => player._id === serverPlayer._id);
         if (!serverPlayer) array.splice(index, 1);
       }
     });
@@ -65,7 +65,7 @@ export default class ServerUpdateBuffer {
       }
       this.intrapolationIndex++;
       gameState.players.forEach((player) => {
-        const playerDelta = this.deltaPackage.players.find(playerDelta => player.id === playerDelta.id);
+        const playerDelta = this.deltaPackage.players.find(playerDelta => player._id === playerDelta._id);
         if (playerDelta) {
           // player.force.angle = player.force.angle + playerDelta.force.angle;
           // player.force.magnitude = player.force.magnitude + playerDelta.force.magnitude;

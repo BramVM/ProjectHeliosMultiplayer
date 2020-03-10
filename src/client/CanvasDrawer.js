@@ -1,6 +1,6 @@
 import Cord from '../shared/Cord'
 import seedrandom from 'seedrandom'
-import { Biomes, BiomeTypes } from '../shared/constants'
+import { Biomes, BiomeTypes, StationTileTypes } from '../shared/constants'
 
 let canvas = null;
 let context = null;
@@ -269,7 +269,7 @@ export function drawTile(tile) {
   context.closePath();
   context.fillStyle = "rgba(" + defualtColor.r + ", " + defualtColor.g + ", " + defualtColor.b + ", 1)";
   context.fill();
-  // context.strokeStyle = "rgba(0,255,255,1)";
+  context.strokeStyle = "rgba(0,255,255,1)";
   // context.stroke();
   context.beginPath();
   context.arc(biomeMid.x, biomeMid.y, biomeSize / 2, 0, 2 * Math.PI, false);
@@ -277,7 +277,7 @@ export function drawTile(tile) {
   biomeGradient.addColorStop(0, "rgba(" + biomeBackgroundColor.r + ", " + biomeBackgroundColor.g + ", " + biomeBackgroundColor.b + ", " + biomeBackgroundColor.a + ")");
   biomeGradient.addColorStop(1, "transparent");
   context.fillStyle = biomeGradient;
-  // context.strokeStyle = "rgba(0,255,255,1)";
+  context.strokeStyle = "rgba(0,255,255,1)";
   // context.stroke();
   context.fill();
   context.closePath();
@@ -1008,18 +1008,18 @@ export function drawStation(station, lightAnimation) {
   var tileSize = 40;
   var tileOffsetX = Math.sin(Math.PI / 3) * tileSize * 2;
   var tileOffsetY = tileSize + Math.cos(Math.PI / 3) * tileSize;
-  var lightIntensity = station.broken?lightAnimation:1;
   station.tiles.forEach((tile) => {
+    var lightIntensity = tile.broken?lightAnimation:1;
     context.translate(tileOffsetX * tile.x, tileOffsetY * tile.y);
     if(tile.y%2 !== 0) context.translate(tileOffsetX/2,0);
-    drawBase(tileSize, lightIntensity);
+    drawStationTile(tileSize, lightIntensity, tile.type);
     if(tile.y%2 !== 0) context.translate(-tileOffsetX/2,0);
     context.translate(-tileOffsetX * tile.x, -tileOffsetY * tile.y);
   })
   context.restore();
 }
 
-function drawBase(s,lightIntensity) {
+function drawStationTile(s, lightIntensity, type) {
   var o = Math.sin(Math.PI / 3) * s
   var a = Math.cos(Math.PI / 3) * s
   context.save()
@@ -1055,7 +1055,8 @@ function drawBase(s,lightIntensity) {
   context.stroke();
   context.fill();
   s = s * 0.6;
-  drawSolarIcon(s);
+  if (type === StationTileTypes.POWER_GENERATOR) drawSolarIcon(s);
+  if (type === StationTileTypes.ACCESS) drawShieldIcon(s);
   // drawBatteryIcon(s);
   // drawShieldIcon(s);
   context.restore();

@@ -47,7 +47,7 @@ export function render(activePlayer, gameState, grid) {
 
   var playersToRender = [...gameState.players].map(player => ({
     ...player,
-    lightPower: player.id === activePlayer.id ? lightPower : powerUpLightAnimation(player.poweringUp)
+    lightPower: player._id === activePlayer._id ? lightPower : powerUpLightAnimation(player.poweringUp)
   }));
 
   if (activePlayerToRender) {

@@ -2,15 +2,20 @@ import { Actions } from '../shared/constants'
 import GameState from '../shared/GameState'
 import UpsatePackage from '../shared/UpdatePackage'
 import addAnimationMethode from './addAnimationMethode'
+import { getToken, getPlayers, updatePlayer} from './auth/indentityAuth';
 
 const gameState = new GameState();
 var GameServer = function () {
-  const gameserver = this;
   const clients = [];
   this.start = () => {
+    
+    getToken().then(token=>{
+      console.log('access token')
+      console.log(token.access_token)
+      getPlayers();
+    });
+
     this.webSocketServer.on('request', function (request) {
-      console.log('websocket request')
-      console.log(request)
       var connection = request.accept(null, request.origin);
       clients.push(connection);
       connection.on('message', function (message) {
@@ -19,21 +24,20 @@ var GameServer = function () {
             console.log(message.utf8Data)
             var messageData = JSON.parse(message.utf8Data);
             if (messageData.action === Actions.CONNECTION && messageData.value) {
-              connection.id = messageData.userId;
-              gameState.addPlayer(messageData.userId)
+              connection.id = messageData.playerServiceObj._id;
+              gameState.addPlayer(messageData.playerServiceObj)
             }
             if (messageData.action === Actions.DIRECTION_CHANGE && messageData.userId ) gameState.setPlayerDirection(messageData.userId, messageData.value);
             if (messageData.action === Actions.MOVEMENT_CHANGE && messageData.userId ) gameState.setPlayerMovement(messageData.userId, messageData.value);
+            if (messageData.action === Actions.STORY_STEP_CHANGE && messageData.userId ) gameState.setPlayerStory(messageData.userId, messageData.value);
           } catch (e) {
-            console.log('This doesn\'t look like a valid JSON: ', message.data);
+            console.log('Invalid socket message: ', message.data);
             return;
           }
         }
       });
       connection.on('close', function (connection) {
         // close user connection
-        console.log('close')
-        console.log(connection)
       });
     });
     
@@ -49,10 +53,16 @@ var GameServer = function () {
       this.lastframetime = t;
       gameState.update(this.dt)
       const updatePackage = new UpsatePackage (gameState)
-      clients.forEach((client, index, array)=>{
-        client.send(JSON.stringify({action:Actions.UPDATE_PACKAGE, value:updatePackage}))
-        if (client.state === "closed"){
-          if (client.id) gameState.players = gameState.players.filter(player=>player.id!== client.id)
+      clients.forEach((connection, index, array)=>{
+        connection.send(JSON.stringify({action:Actions.UPDATE_PACKAGE, value:updatePackage}))
+        if (connection.state === "closed"){
+          if (connection.id) {
+            const player = gameState.players.find(player=>player._id === connection.id);
+            updatePlayer(player).catch(error => {
+              console.log(error)
+            })
+            gameState.players = gameState.players.filter(player=>player._id!== connection.id);
+          }
           array.splice(index, 1);
         }
       })
