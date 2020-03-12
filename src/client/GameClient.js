@@ -43,6 +43,9 @@ var GameClient = function () {
   })
   this.start = async () => {
     // get player for logged in user
+    await fetch(new Request('https://jsonplaceholder.typicode.com/todos/1', {
+      method: 'GET',
+    }));
     var player = await getPlayer()
       .catch(error => {
         console.log('error')
