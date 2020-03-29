@@ -1,4 +1,4 @@
-exports.mapPlayer = (input) => {
+const mapPlayer = (input) => {
   const player = {
     position: {
       x:input.position.x,
@@ -10,9 +10,10 @@ exports.mapPlayer = (input) => {
   }
   return player
 }
+exports.mapPlayer = mapPlayer;
 
 exports.mapPlayers = (inputs) => {
-  const players = {};
+  let players = [];
   inputs.forEach(input => {
     players.push(mapPlayer(input))
   });
