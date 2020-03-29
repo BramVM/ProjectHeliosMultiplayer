@@ -1,5 +1,5 @@
 var axios = require("axios");
-import { mapPlayer } from '../mappers/outputMappers';
+import { mapPlayer, mapPlayers } from '../mappers/outputMappers';
 
 const authApi = axios.create({
   baseURL: 'https://project-helios.eu.auth0.com',
@@ -8,7 +8,7 @@ const authApi = axios.create({
 });
 
 const playerServiceApi = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: process.env.API_URL,
   timeout: 1000,
   headers: { 'content-type': 'application/json' }
 });
@@ -44,6 +44,13 @@ export async function getPlayers() {
 
 export async function updatePlayer(player) {
   return playerServiceApi.patch('/players/' + player._id , mapPlayer(player))
+    .catch(error => {
+      console.log(error)
+    })
+}
+
+export async function updatePlayers(players) {
+  return playerServiceApi.patch('/players' , mapPlayers(players))
     .catch(error => {
       console.log(error)
     })

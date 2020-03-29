@@ -10,3 +10,11 @@ exports.mapPlayer = (input) => {
   }
   return player
 }
+
+exports.mapPlayers = (inputs) => {
+  const players = {};
+  inputs.forEach(input => {
+    players.push(mapPlayer(input))
+  });
+  return players
+}

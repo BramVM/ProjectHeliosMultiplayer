@@ -1,8 +1,8 @@
 import { Actions } from '../shared/constants'
 import GameState from '../shared/GameState'
-import UpsatePackage from '../shared/UpdatePackage'
+import UpdatePackage from '../shared/UpdatePackage'
 import addAnimationMethode from './addAnimationMethode'
-import { getToken, getPlayers, updatePlayer} from './auth/indentityAuth';
+import { getToken, getPlayers, updatePlayer, updatePlayers} from './auth/indentityAuth';
 
 const gameState = new GameState();
 var GameServer = function () {
@@ -48,11 +48,17 @@ var GameServer = function () {
   }
   this.updateLoop = function(t) {
     this.dt = ( (t - this.lastframetime)/1000);
-    var minDelay = 0.1;
-    if (this.dt>minDelay){
+    var minPackageDelay = 0.1;
+    var minPlayerUpdateDelay = 10;
+    if (this.dt>minPlayerUpdateDelay){
+      updatePlayers(gameState.players).catch(error => {
+        console.log(error)
+      })
+    }
+    if (this.dt>minPackageDelay){
       this.lastframetime = t;
       gameState.update(this.dt)
-      const updatePackage = new UpsatePackage (gameState)
+      const updatePackage = new UpdatePackage (gameState)
       clients.forEach((connection, index, array)=>{
         connection.send(JSON.stringify({action:Actions.UPDATE_PACKAGE, value:updatePackage}))
         if (connection.state === "closed"){
