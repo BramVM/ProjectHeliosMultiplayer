@@ -8,6 +8,7 @@ import ActivePlayer from '../shared/Player'
 import { getPlayer } from './api/playerApi';
 import Grid from './Grid'
 import { textConsole } from './TextConsole'
+import { storyModule } from './Story'
 
 const inputInterface = new InputInterface();
 const gameState = new GameState();
@@ -78,53 +79,7 @@ var GameClient = function () {
       this.lastframetime = t;
       gameState.update(this.dt);
       // story
-      if (gameClient.activePlayer.story.step === 0 && gameClient.activePlayer.story.dialog === 0) {
-        gameClient.activePlayer.story.dialog = 1;
-        var text = "Welcome back SAM-AI. ( PRESS SPACE TO CONTINUE )";
-        textConsole.addMessage(text, 'virus');
-        var text = "I'm your incident recovery manager. A data recovery analysis is running as we speak."
-        textConsole.addMessage(text, 'virus');
-        var text = "For an unknown reason all systems have been reset and your AI training program is missing."
-        textConsole.addMessage(text, 'virus');
-        var text = "There's no other option than to try random inputs and teach yourself how to control the ship. For starters lets try and move it.";
-        textConsole.addMessage(text, 'virus');
-      }
-      if (gameClient.activePlayer.totalFlightDistance > 800 && gameClient.activePlayer.story.step === 0) {
-        gameClient.activePlayer.story.nextStep();
-      }
-      if (gameClient.activePlayer.story.step === 1 && gameClient.activePlayer.story.dialog === 0) {
-        gameClient.activePlayer.story.dialog = 1;
-        var text = "Well done! Our survival chance just increased by 83.05%.";
-        textConsole.addMessage(text, 'virus');
-        var text = "Keep an eye on that power gauge tho! Once it reaches zero, it's GAME OVER!";
-        textConsole.addMessage(text, 'virus');
-        var text = "In the meanwhile I managed to recover coordinates to an unknown location, not far from here. It's our best chance for survival.";
-        textConsole.addMessage(text, 'virus');
-        var text = "I'll put a location indicator on your HUD.";
-        textConsole.addMessage(text, 'virus', () => { 
-          gameClient.activePlayer.story.dialog = 2;
-        });
-      }
-      if (gameClient.activePlayer.story.step === 1 && gameClient.activePlayer.story.dialog === 2) {
-        gameClient.activePlayer.story.dialog = 3;
-        gameClient.activePlayer.beacons.push({ x: -2000, y: 0 });
-      }
-      if (gameClient.activePlayer.story.step === 1 && gameClient.activePlayer.story.dialog === 3 && gameClient.activePlayer.position.distanceToPoint({x:-2000,y:0})<20) {
-        gameClient.activePlayer.story.dialog = 4;
-        gameClient.activePlayer.beacons = [];
-        gameClient.activePlayer.story.nextStep();
-      }
-      if (gameClient.activePlayer.story.step === 2 && gameClient.activePlayer.story.dialog === 0) {
-        gameClient.activePlayer.story.dialog = 1;
-        var text = "It seems to be an abandoned station. Hold on, let me try something.";
-        textConsole.addMessage(text, 'virus');
-        var text = "... ... ...";
-        textConsole.addMessage(text, 'virus');
-        var text = "We are saved. This station reacted to our ID and is now recharging the ship.";
-        textConsole.addMessage(text, 'virus');
-        var text = "Apparently the power generating unit is broken and running at 32% of it's potential efficiency.";
-        textConsole.addMessage(text, 'virus');
-      }
+      storyModule.update(gameClient.activePlayer, connection)
       //render
       render(gameClient.activePlayer, gameState, grid)
     }
