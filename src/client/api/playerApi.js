@@ -2,7 +2,7 @@ import { Get } from './authorizedRequest';
 import { mapPlayer } from '../mappers/playerMapper';
 
 export async function getPlayers() {
-  const request = Get('players');
+  const request = Get('/players');
   const response = await fetch(request);
   if (!response.ok) {
     let err;
@@ -17,7 +17,7 @@ export async function getPlayers() {
 }
 
 export async function getPlayer() {
-  const request = Get('active-player');
+  const request = Get('/active-player');
   const response = await fetch(request);
   if (!response.ok) {
     let err;
