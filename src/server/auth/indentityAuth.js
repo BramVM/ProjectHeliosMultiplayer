@@ -13,12 +13,11 @@ const playerServiceApi = axios.create({
   headers: { 'content-type': 'application/json' }
 });
 
-
 export async function getToken() {
   return authApi.post('/oauth/token', {
     client_id: "25WF2n6B6ZOWHfi2DXRTBPvh6BpNXwps",
     client_secret: "51SHrq9WMPs7JqQR5DB-hW05ia5FyK93LNB63jWFRG0qSaakEXEAfGUQWHtJieAy",
-    audience: "JoIiAy0WMIHx5F808UVv7YgIpofYJil6",
+    audience: process.env.CLIENT_ID,
     grant_type: "client_credentials"
   })
     .then(response => {
