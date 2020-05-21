@@ -40,7 +40,8 @@ if(process && process.env){
       CALLBACK_URL: JSON.stringify(process.env.CALLBACK_URL),
       API_URL: JSON.stringify(process.env.API_URL),
       PLAYER_CLIENT_ID: JSON.stringify(process.env.PLAYER_CLIENT_ID),
-      PLAYER_CLIENT_SECRET: JSON.stringify(process.env.PLAYER_CLIENT_SECRET)
+      PLAYER_CLIENT_SECRET: JSON.stringify(process.env.PLAYER_CLIENT_SECRET),
+      STATION_API_AUDIENCE: JSON.stringify(process.env.STATION_API_AUDIENCE)
     }
   }))
 }

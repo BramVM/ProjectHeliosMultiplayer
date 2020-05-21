@@ -17,7 +17,7 @@ export async function getToken() {
   return authApi.post('/oauth/token', {
     client_id: process.env.BFF_CLIENT_ID,
     client_secret: process.env.BFF_CLIENT_SECRET,
-    audience: 'helios-station-service-local',
+    audience: process.env.STATION_API_AUDIENCE,
     grant_type: "client_credentials"
   })
     .then(response => {
