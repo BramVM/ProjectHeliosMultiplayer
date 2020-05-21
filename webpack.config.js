@@ -38,9 +38,10 @@ if(process && process.env){
       IDENTITY_URL: JSON.stringify(process.env.IDENTITY_URL),
       CLIENT_ID: JSON.stringify(process.env.CLIENT_ID),
       CALLBACK_URL: JSON.stringify(process.env.CALLBACK_URL),
-      API_URL: JSON.stringify(process.env.API_URL),
-      PLAYER_CLIENT_ID: JSON.stringify(process.env.PLAYER_CLIENT_ID),
-      PLAYER_CLIENT_SECRET: JSON.stringify(process.env.PLAYER_CLIENT_SECRET)
+      PLAYER_API_URL: JSON.stringify(process.env.PLAYER_API_URL),
+      STATION_API_URL: JSON.stringify(process.env.STATION_API_URL),
+      BFF_CLIENT_ID: JSON.stringify(process.env.BFF_CLIENT_ID),
+      BFF_CLIENT_SECRET: JSON.stringify(process.env.BFF_CLIENT_SECRET)
     }
   }))
 }
