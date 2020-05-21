@@ -5,7 +5,7 @@ var dialogDone = false;
 
 var showDialog = (lines) => {
   dialogDone = false;
-  lines.forEach( (line, index) => {
+  lines.forEach((line, index) => {
     textConsole.addMessage(line, 'virus', () => { if (index === lines.length - 1) dialogDone = true });
   });
 }
@@ -38,9 +38,9 @@ var storyChapters = [
     }, {
       advancementHold: () => (!dialogDone)
     }, {
-      action: (player) => player.beacons.push({ x: -2000, y: 0 })
+      action: (player, station) => player.beacons.push(station.position)
     }, {
-      advancementHold: (player) => player.position.distanceToPoint({ x: -2000, y: 0 }) > 20
+      advancementHold: (player, station) => player.position.distanceToPoint(station.position) > 20
     }, {
       action: (player) => player.beacons = []
     }
@@ -79,11 +79,11 @@ var storyChapters = [
   }
 ]
 
-var update = (player, connection) => {
+var update = (player, station, connection) => {
   if (storyChapters[player.story.step]) {
     var currentStep = storyChapters[player.story.step].steps[player.story.dialog];
-    if (currentStep.action) currentStep.action(player);
-    if (!currentStep.advancementHold || !currentStep.advancementHold(player)) player.story.dialog++;
+    if (currentStep.action) currentStep.action(player, station);
+    if (!currentStep.advancementHold || !currentStep.advancementHold(player, station)) player.story.dialog++;
     if (player.story.dialog === storyChapters[player.story.step].steps.length) {
       player.story.step++;
       player.story.dialog = 0;

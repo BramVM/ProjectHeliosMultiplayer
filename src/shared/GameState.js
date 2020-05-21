@@ -1,13 +1,6 @@
 import Player from './Player'
 import Cord from '../shared/Cord'
 
-const gravFields = [
-  {
-    position: new Cord(-2000, 0),
-    range: 300,
-    force: 250
-  }
-]
 function addVectors(vectors) {
   let result = new Cord();
   vectors.forEach(vector => {
@@ -19,6 +12,8 @@ function addVectors(vectors) {
 var GameState = function () {
   const gameState = this;
   this.players = [];
+  this.stations = [];
+
   this.setPlayerMovement = (userId, value) => {
     var player = this.players.find((player) => { return player._id === userId })
     player.movement = value;
@@ -33,6 +28,11 @@ var GameState = function () {
   }
 
   this.update = (dt) => {
+    const gravFields = gameState.stations.map(station => ({
+      position: new Cord(station.position.x, station.position.y),
+      range: 200,
+      force: 100
+    }))
     gameState.players.forEach((player) => {
       const wantedAngle = player.direction * Math.PI / 4
       player.power.value = player.power.value - 0.01 * dt;
@@ -45,12 +45,14 @@ var GameState = function () {
       player.rotation = player.velocity.angleToPoint({ x: 0, y: 0 });
       player.rotation = player.rotation ? player.rotation : 0;
       // apply gravity
-      const gravAngle = gravFields[0].position.angleToPoint(player.position)
-      const distanceToGrav = player.position.distanceToPoint(gravFields[0].position)
-      let multiplyer = (gravFields[0].range - distanceToGrav)/gravFields[0].range
-      if (multiplyer < 0) multiplyer = 0;
-      var gravAcceleration = new Cord().moveByDistanceAndAngle(gravFields[0].force * multiplyer * dt, gravAngle);
-      if (distanceToGrav > 20) player.velocity = player.velocity.moveByVector(gravAcceleration);
+      gravFields.forEach(gravField => {
+        const gravAngle = gravField.position.angleToPoint(player.position)
+        const distanceToGrav = player.position.distanceToPoint(gravField.position)
+        let multiplyer = (gravField.range - distanceToGrav) / gravField.range
+        if (multiplyer < 0) multiplyer = 0;
+        var gravAcceleration = new Cord().moveByDistanceAndAngle(gravField.force * multiplyer * dt, gravAngle);
+        if (distanceToGrav > 20) player.velocity = player.velocity.moveByVector(gravAcceleration);
+      })
       // apply drag
       player.velocity = addVectors([player.velocity, new Cord(-player.velocity.x * 0.9 * dt, -player.velocity.y * 0.9 * dt)])
       // apply vector to position

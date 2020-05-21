@@ -1,7 +1,8 @@
 
 class UpdatePackage {
-  constructor (gamestate){
-    this.players=gamestate.players;
+  constructor(gamestate) {
+    this.players = gamestate.players;
+    this.stations = gamestate.stations
   }
 }
 

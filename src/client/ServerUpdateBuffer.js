@@ -11,10 +11,11 @@ export default class ServerUpdateBuffer {
     this.intrapolationIndex = 0;
   }
   instantUpdates(userId, gameState) {
+    gameState.stations = this.updatePackage.stations;
     this.updatePackage.players.forEach((serverPlayer) => {
       var player = gameState.players.find(player => player._id === serverPlayer._id);
       if (player) {
-        if ( userId !== player._id ){
+        if (userId !== player._id) {
           player.movement = serverPlayer.movement;
           player.direction = serverPlayer.direction;
         }

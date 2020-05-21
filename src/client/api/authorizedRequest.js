@@ -1,7 +1,7 @@
 import queryString from 'query-string';
 import { token } from '../auth/indentityAuth';
 
-const apiUrl = process.env.API_URL;
+const apiUrl = process.env.PLAYER_API_URL;
 
 function AuthorizedHeaders() {
   const headers = new Headers();

@@ -79,7 +79,7 @@ var GameClient = function () {
       this.lastframetime = t;
       gameState.update(this.dt);
       // story
-      storyModule.update(gameClient.activePlayer, connection)
+      storyModule.update(gameClient.activePlayer, gameState.stations.find(station => station.playerId === gameClient.activePlayer._id), connection)
       //render
       render(gameClient.activePlayer, gameState, grid)
     }

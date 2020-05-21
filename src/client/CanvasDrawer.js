@@ -964,7 +964,7 @@ export function drawConsole(text, wordIndex, intensity, showMore, avatar, blink)
 }
 
 export function drawBeacon(beacon, playerDirection) {
-  const position = new Cord(beacon.x - perspective.x, beacon.y - perspective.y);
+  const position = new Cord(beacon.x - perspective.x, -beacon.y - perspective.y);
 
   const windowHalfX = context.canvas.width / 2;
   const windowHalfY = context.canvas.height / 2;
@@ -1004,7 +1004,7 @@ export function drawBeacon(beacon, playerDirection) {
 }
 export function drawStation(station, lightAnimation) {
   context.save();
-  context.translate(station.position.x - perspective.x, station.position.y - perspective.y);
+  context.translate(station.position.x - perspective.x, -station.position.y - perspective.y);
   var tileSize = 40;
   var tileOffsetX = Math.sin(Math.PI / 3) * tileSize * 2;
   var tileOffsetY = tileSize + Math.cos(Math.PI / 3) * tileSize;

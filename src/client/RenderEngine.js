@@ -66,7 +66,7 @@ export function render(activePlayer, gameState, grid) {
   if (activePlayerToRender) {
     drawDarkness(1 - getBiomeLight(activePlayerToRender.position).value, playersToRender);
   }
-  stations.forEach((station) => {
+  gameState.stations.forEach((station) => {
     drawStation(station, brokenLightAnimation());
   })
   playersToRender.forEach((player) => {

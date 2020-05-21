@@ -7,22 +7,22 @@ const authApi = axios.create({
   headers: { 'content-type': 'application/json' }
 });
 
-const playerServiceApi = axios.create({
-  baseURL: process.env.API_URL,
+const stationServiceApi = axios.create({
+  baseURL: process.env.STATION_API_URL,
   timeout: 1000,
   headers: { 'content-type': 'application/json' }
 });
 
 export async function getToken() {
   return authApi.post('/oauth/token', {
-    client_id: process.env.PLAYER_CLIENT_ID,
-    client_secret: process.env.PLAYER_CLIENT_SECRET,
-    audience: process.env.CLIENT_ID,
+    client_id: process.env.BFF_CLIENT_ID,
+    client_secret: process.env.BFF_CLIENT_SECRET,
+    audience: 'helios-station-service-local',
     grant_type: "client_credentials"
   })
     .then(response => {
       const token = response.data;
-      playerServiceApi.defaults.headers.common['Authorization'] = `${token.token_type} ${token.access_token}`;
+      stationServiceApi.defaults.headers.common['Authorization'] = `${token.token_type} ${token.access_token}`;
       authApi.defaults.headers.common['Authorization'] = `${token.token_type} ${token.access_token}`;
       return response.data;
     })
@@ -31,8 +31,8 @@ export async function getToken() {
     })
 }
 
-export async function getPlayers() {
-  return playerServiceApi.get('/players')
+export async function getStations() {
+  return stationServiceApi.get('/stations')
     .then(response => {
       return response.data;
     })
@@ -41,15 +41,11 @@ export async function getPlayers() {
     })
 }
 
-export async function updatePlayer(player) {
-  return playerServiceApi.patch('/players/' + player._id , mapPlayer(player))
-    .catch(error => {
-      console.log(error)
+export async function createStation(station) {
+  return stationServiceApi.post('/stations',station)
+    .then(response => {
+      return response.data;
     })
-}
-
-export async function updatePlayers(players) {
-  return playerServiceApi.patch('/players' , mapPlayers(players))
     .catch(error => {
       console.log(error)
     })

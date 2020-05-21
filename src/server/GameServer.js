@@ -2,17 +2,18 @@ import { Actions } from '../shared/constants'
 import GameState from '../shared/GameState'
 import UpdatePackage from '../shared/UpdatePackage'
 import addAnimationMethode from './addAnimationMethode'
-import { getToken, getPlayers, updatePlayer, updatePlayers } from './auth/indentityAuth';
+import { getToken as getPlayerToken, getPlayers, updatePlayer, updatePlayers } from './api/player-service-api';
+import { getToken as getStationToken, getStations } from './api/station-service-api';
 
 const gameState = new GameState();
 var GameServer = function () {
   const clients = [];
   this.start = () => {
 
-    getToken().then(token => {
-      console.log('access token')
-      console.log(token.access_token)
+    getPlayerToken().then(token => {
       getPlayers();
+    });
+    getStationToken().then(token => {
     });
 
     this.webSocketServer.on('request', function (request) {
@@ -51,11 +52,16 @@ var GameServer = function () {
     var minPackageDelay = 0.1;
     if (this.playerUpdateTimer > 50) {
       this.playerUpdateTimer = 0;
-      if (gameState.players.length>0) {
+      if (gameState.players.length > 0) {
         updatePlayers(gameState.players).catch(error => {
           console.log(error)
         })
       }
+      getStations()
+        .then(stations => gameState.stations = stations)
+        .catch(error => {
+          console.log(error)
+        })
     }
     if (this.dt > minPackageDelay) {
       this.playerUpdateTimer++;
