@@ -71,6 +71,7 @@ var GameServer = function () {
       clients.forEach((connection, index, array) => {
         connection.send(JSON.stringify({ action: Actions.UPDATE_PACKAGE, value: updatePackage }))
         if (connection.state === "closed") {
+          console.log('connection closed');
           if (connection.id) {
             const player = gameState.players.find(player => player._id === connection.id);
             updatePlayer(player).catch(error => {

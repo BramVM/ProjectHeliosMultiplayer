@@ -52,7 +52,6 @@ var GameClient = function () {
 
     // let gameserver know you are here
     connection.send(JSON.stringify({ action: Actions.CONNECTION, value: true, playerServiceObj: player }));
-
     gameClient.activePlayer = gameState.addPlayer(player);
     textConsole.hold(true);
 
@@ -72,6 +71,7 @@ var GameClient = function () {
     this.updateLoop();
   }
   this.updateLoop = function (t) {
+    console.log(connection.readyState === connection.OPEN ? 'socket connection open' : '! socket connection closed !')
     serverUpdateBuffer.update(gameClient.activePlayer._id, gameState);
     this.dt = ((t - this.lastframetime) / 1000);
     var minDelay = 0.03;
